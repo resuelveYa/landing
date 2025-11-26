@@ -1,7 +1,7 @@
 import { currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import { UserButton } from '@clerk/nextjs';
-import { Sparkles, Bot, ExternalLink, Zap, BarChart3, FileText, ArrowRight } from 'lucide-react';
+import { Sparkles, Bot, ExternalLink, Zap, BarChart3, FileText, ArrowRight, TrendingUp, DollarSign } from 'lucide-react';
 import Link from 'next/link';
 import { getProductUrls } from '@/lib/config';
 import Logo from '@/components/logo';
@@ -50,7 +50,7 @@ export default async function DashboardPage() {
             ¡Hola, {user.firstName || 'Usuario'}! 👋
           </h2>
           <p className="text-xl text-gray-600">
-            {companyName ? `Analiza presupuestos de ${companyName}` : 'Bienvenido a tu asistente de presupuestos con IA'}
+            {companyName ? `Gestiona las finanzas de ${companyName}` : 'Bienvenido a tu suite de gestión financiera con IA'}
           </p>
         </div>
 
@@ -115,7 +115,7 @@ export default async function DashboardPage() {
               <Bot size={28} />
             </div>
             <h3 className="text-2xl font-black mb-2">
-              Comenzar Análisis
+              Análisis Rápido
             </h3>
             <p className="text-cyan-100 mb-4">
               Sube documentos y obtén insights
@@ -132,54 +132,103 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        {/* Product Card */}
-        <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border-2 border-gray-200">
-          <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 p-8 text-white">
-            <div className="flex items-center gap-4 mb-4">
-              <Bot size={40} />
-              <div>
-                <h3 className="text-3xl font-black">Asistente IA de Presupuestos</h3>
-                <p className="text-white/90 text-lg">Análisis inteligente y conversacional</p>
+        {/* Products Grid */}
+        <div className="grid lg:grid-cols-2 gap-6 mb-8">
+          {/* Budget Analyzer Card */}
+          <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border-2 border-gray-200">
+            <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 p-8 text-white">
+              <div className="flex items-center gap-4 mb-4">
+                <Bot size={40} />
+                <div>
+                  <h3 className="text-3xl font-black">Asistente IA de Presupuestos</h3>
+                  <p className="text-white/90 text-lg">Análisis inteligente y conversacional</p>
+                </div>
               </div>
+            </div>
+
+            <div className="p-8">
+              <div className="grid md:grid-cols-3 gap-6 mb-8">
+                <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl">
+                  <FileText size={32} className="mx-auto text-blue-600 mb-3" />
+                  <h4 className="font-bold text-gray-900 mb-2">Análisis de Documentos</h4>
+                  <p className="text-sm text-gray-600">Sube Excel, PDF o CSV</p>
+                </div>
+                
+                <div className="text-center p-6 bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl">
+                  <BarChart3 size={32} className="mx-auto text-purple-600 mb-3" />
+                  <h4 className="font-bold text-gray-900 mb-2">Comparaciones</h4>
+                  <p className="text-sm text-gray-600">Detecta desviaciones automáticamente</p>
+                </div>
+                
+                <div className="text-center p-6 bg-gradient-to-br from-pink-50 to-orange-50 rounded-2xl">
+                  <Sparkles size={32} className="mx-auto text-pink-600 mb-3" />
+                  <h4 className="font-bold text-gray-900 mb-2">Proyecciones IA</h4>
+                  <p className="text-sm text-gray-600">Predicciones precisas</p>
+                </div>
+              </div>
+
+              <a
+                href={urls.chat}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-3 transition-all shadow-xl hover:shadow-2xl transform hover:scale-105"
+              >
+                <Bot size={24} />
+                Abrir Asistente IA
+                <ExternalLink size={20} />
+              </a>
             </div>
           </div>
 
-          <div className="p-8">
-            <div className="grid md:grid-cols-3 gap-6 mb-8">
-              <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl">
-                <FileText size={32} className="mx-auto text-blue-600 mb-3" />
-                <h4 className="font-bold text-gray-900 mb-2">Análisis de Documentos</h4>
-                <p className="text-sm text-gray-600">Sube Excel, PDF o CSV</p>
-              </div>
-              
-              <div className="text-center p-6 bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl">
-                <BarChart3 size={32} className="mx-auto text-purple-600 mb-3" />
-                <h4 className="font-bold text-gray-900 mb-2">Comparaciones</h4>
-                <p className="text-sm text-gray-600">Detecta desviaciones automáticamente</p>
-              </div>
-              
-              <div className="text-center p-6 bg-gradient-to-br from-pink-50 to-orange-50 rounded-2xl">
-                <Sparkles size={32} className="mx-auto text-pink-600 mb-3" />
-                <h4 className="font-bold text-gray-900 mb-2">Proyecciones IA</h4>
-                <p className="text-sm text-gray-600">Predicciones precisas</p>
+          {/* Cash Flow Card */}
+          <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border-2 border-gray-200">
+            <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 p-8 text-white">
+              <div className="flex items-center gap-4 mb-4">
+                <TrendingUp size={40} />
+                <div>
+                  <h3 className="text-3xl font-black">Flujo de Caja</h3>
+                  <p className="text-white/90 text-lg">Gestión financiera completa</p>
+                </div>
               </div>
             </div>
 
-            <a
-              href={urls.chat}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-3 transition-all shadow-xl hover:shadow-2xl transform hover:scale-105"
-            >
-              <Bot size={24} />
-              Abrir Asistente IA
-              <ExternalLink size={20} />
-            </a>
+            <div className="p-8">
+              <div className="grid md:grid-cols-3 gap-6 mb-8">
+                <div className="text-center p-6 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl">
+                  <DollarSign size={32} className="mx-auto text-emerald-600 mb-3" />
+                  <h4 className="font-bold text-gray-900 mb-2">Ingresos</h4>
+                  <p className="text-sm text-gray-600">Seguimiento de entradas</p>
+                </div>
+                
+                <div className="text-center p-6 bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl">
+                  <BarChart3 size={32} className="mx-auto text-teal-600 mb-3" />
+                  <h4 className="font-bold text-gray-900 mb-2">Egresos</h4>
+                  <p className="text-sm text-gray-600">Control de costos</p>
+                </div>
+                
+                <div className="text-center p-6 bg-gradient-to-br from-cyan-50 to-blue-50 rounded-2xl">
+                  <TrendingUp size={32} className="mx-auto text-cyan-600 mb-3" />
+                  <h4 className="font-bold text-gray-900 mb-2">Proyecciones</h4>
+                  <p className="text-sm text-gray-600">Forecasting preciso</p>
+                </div>
+              </div>
+
+              <a
+                href={urls.admin}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white px-8 py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-3 transition-all shadow-xl hover:shadow-2xl transform hover:scale-105"
+              >
+                <TrendingUp size={24} />
+                Abrir Flujo de Caja
+                <ExternalLink size={20} />
+              </a>
+            </div>
           </div>
         </div>
 
         {/* Help Section */}
-        <div className="mt-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white shadow-xl">
+        <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white shadow-xl">
           <h3 className="text-2xl font-black mb-2">
             ¿Necesitas ayuda?
           </h3>
