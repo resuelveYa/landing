@@ -1,6 +1,6 @@
 module.exports = {
   apps: [{
-    name: 'saerti-landing',
+    name: 'landing',
     script: './.next/standalone/server.js',
     instances: 1,
     exec_mode: 'cluster',
@@ -12,8 +12,8 @@ module.exports = {
     },
 
     // Logging
-    error_file: '/var/www/logs/saerti-landing-error.log',
-    out_file: '/var/www/logs/saerti-landing-out.log',
+    error_file: '/var/www/logs/landing-error.log',
+    out_file: '/var/www/logs/landing-out.log',
     log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
     merge_logs: true,
 
