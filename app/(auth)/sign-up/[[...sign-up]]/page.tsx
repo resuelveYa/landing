@@ -26,7 +26,7 @@ export default function SignUpPage() {
             </p>
           </div>
 
-          <SignUp 
+          <SignUp
             appearance={{
               elements: {
                 rootBox: "w-full",
@@ -35,7 +35,7 @@ export default function SignUpPage() {
             }}
             routing="path"
             path="/sign-up"
-            redirectUrl="/dashboard"
+
             signInUrl="/sign-in"
           />
 
