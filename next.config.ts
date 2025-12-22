@@ -1,10 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Standalone build for deployment
-  output: 'standalone',
-
   images: {
-    domains: ['img.clerk.com'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'img.clerk.com',
+      },
+    ],
     formats: ['image/avif', 'image/webp'],
   },
 
