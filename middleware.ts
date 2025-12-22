@@ -3,6 +3,25 @@ import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 const isProtectedRoute = createRouteMatcher(['/dashboard(.*)']);
 
 export default clerkMiddleware(async (auth, req) => {
+  // Check if there's a redirect_url in the query params
+  const url = new URL(req.url);
+  const redirectUrl = url.searchParams.get('redirect_url');
+
+  // If user is signed in and there's a redirect_url, redirect to it
+  const { userId } = await auth();
+  if (userId && redirectUrl) {
+    // Only allow redirects to our own domains for security
+    const allowedDomains = ['cashflow.resuelveya.cl', 'budget.resuelveya.cl', 'app.resuelveya.cl'];
+    try {
+      const redirectUrlObj = new URL(redirectUrl);
+      if (allowedDomains.includes(redirectUrlObj.hostname)) {
+        return Response.redirect(redirectUrl);
+      }
+    } catch (e) {
+      // Invalid URL, ignore
+    }
+  }
+
   if (isProtectedRoute(req)) {
     await auth.protect();
   }
