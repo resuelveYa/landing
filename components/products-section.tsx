@@ -9,7 +9,7 @@ const products = [
     subtitle: 'Análisis instantáneo y respuestas inteligentes',
     icon: Bot,
     gradient: 'from-blue-600 to-purple-600',
-    url: 'https://chat.resuelveya.cl',
+    url: 'https://budget.resuelveya.cl',
     features: [
       {
         icon: FileText,
@@ -54,7 +54,7 @@ const products = [
     subtitle: 'Gestión financiera automatizada para tu empresa',
     icon: TrendingUp,
     gradient: 'from-emerald-600 to-teal-600',
-    url: 'https://admin.resuelveya.cl',
+    url: 'https://cashflow.resuelveya.cl',
     features: [
       {
         icon: Wallet,
@@ -170,7 +170,7 @@ export default function ProductsSection() {
                     <p className="text-white font-bold text-2xl mb-1">Comienza ahora</p>
                     <p className="text-white/80">Acceso beta gratuito por tiempo limitado</p>
                   </div>
-                  <a 
+                  <a
                     href="#beta"
                     className="group inline-flex items-center justify-center px-8 py-4 bg-white text-blue-600 font-bold rounded-full hover:bg-gray-100 transition-all shadow-xl hover:shadow-2xl hover:scale-105"
                   >
@@ -211,7 +211,7 @@ export default function ProductsSection() {
               <h4 className="text-xl font-bold text-white">Budget Analyzer</h4>
             </div>
             <p className="text-white/70 mb-4">
-              <strong className="text-white">Ideal para:</strong> Análisis puntuales de presupuestos y proyectos. 
+              <strong className="text-white">Ideal para:</strong> Análisis puntuales de presupuestos y proyectos.
               Perfecto para gerentes de proyecto, analistas y empresas que necesitan validar cotizaciones.
             </p>
             <div className="flex items-center gap-2 text-cyan-300">
@@ -226,7 +226,7 @@ export default function ProductsSection() {
               <h4 className="text-xl font-bold text-white">Flujo de Caja</h4>
             </div>
             <p className="text-white/70 mb-4">
-              <strong className="text-white">Ideal para:</strong> Gestión continua de finanzas empresariales. 
+              <strong className="text-white">Ideal para:</strong> Gestión continua de finanzas empresariales.
               Perfecto para emprendedores, CFOs y contadores que necesitan control total.
             </p>
             <div className="flex items-center gap-2 text-emerald-300">
@@ -238,7 +238,7 @@ export default function ProductsSection() {
 
         <div className="mt-8 pt-8 border-t border-white/10 text-center">
           <p className="text-white/60 text-sm">
-            💡 <strong className="text-white">Pro Tip:</strong> Usa ambas herramientas en conjunto para máxima eficiencia. 
+            💡 <strong className="text-white">Pro Tip:</strong> Usa ambas herramientas en conjunto para máxima eficiencia.
             Budget Analyzer para validar cotizaciones y Flujo de Caja para gestionar la ejecución.
           </p>
         </div>
