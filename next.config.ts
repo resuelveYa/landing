@@ -1,14 +1,17 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Standalone build for deployment
+  output: 'standalone',
+
   images: {
     domains: ['img.clerk.com'],
     formats: ['image/avif', 'image/webp'],
   },
-  
+
   // Optimizaciones de rendimiento
   compress: true,
   poweredByHeader: false,
-  
+
   // Redirects para SEO
   async redirects() {
     return [
