@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { ClerkProvider } from '@clerk/nextjs';
 import GoogleAnalytics from '@/components/GoogleAnalytics';
+import { MetaPixel } from '@/components/MetaPixel';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -15,6 +16,9 @@ export const metadata: Metadata = {
   creator: 'resuelveYA',
   publisher: 'resuelveYA',
   metadataBase: new URL('https://resuelveYA.cl'),
+  other: {
+    'facebook-domain-verification': process.env.NEXT_PUBLIC_META_DOMAIN_VERIFICATION || '',
+  },
   openGraph: {
     title: 'resuelveYA - Software de Gestión Empresarial',
     description: 'Gestiona tu empresa con flujo de caja automático y asistente IA',
@@ -71,6 +75,7 @@ export default function RootLayout({
       <html lang="es-CL">
         <body className={inter.className}>
           <GoogleAnalytics />
+          <MetaPixel />
           {children}
         </body>
       </html>
