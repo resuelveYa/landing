@@ -28,7 +28,7 @@ jobs:
         env:
           NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.CLERK_PUBLISHABLE_KEY }}
           CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
-          NEXT_PUBLIC_API_URL: https://api.resuelveya.cl
+          NEXT_PUBLIC_API_URL: https://resuelveya.cl/api
         run: npm run build
       
       - name: Create deployment package
@@ -37,7 +37,7 @@ jobs:
           cp -r .next/standalone/* deploy/
           cp -r .next/static deploy/.next/static
           cp -r public deploy/public 2>/dev/null || true
-          cp ecosystem.config.js deploy/ 2>/dev/null || echo "module.exports = {apps: [{name: 'landing', script: 'server.js', env: {PORT: 3001}}]}" > deploy/ecosystem.config.js
+          cp ecosystem.config.cjs deploy/ 2>/dev/null || echo "module.exports = {apps: [{name: 'landing', script: 'server.js', env: {PORT: 3001}}]}" > deploy/ecosystem.config.cjs
           tar -czf landing-deploy.tar.gz -C deploy .
       
       - name: Setup SSH
@@ -79,14 +79,14 @@ jobs:
             cat > .env.production << 'ENVEOF'
           NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=${{ secrets.CLERK_PUBLISHABLE_KEY }}
           CLERK_SECRET_KEY=${{ secrets.CLERK_SECRET_KEY }}
-          NEXT_PUBLIC_API_URL=https://api.resuelveya.cl
+          NEXT_PUBLIC_API_URL=https://resuelveya.cl/api
           NODE_ENV=production
           PORT=3001
           ENVEOF
             
             # Restart
             echo "🔄 Restarting service..."
-            pm2 restart landing || pm2 start ecosystem.config.js --name landing
+            pm2 restart landing || pm2 start ecosystem.config.cjs
             pm2 save
             
             echo "✅ Deployment completed!"
