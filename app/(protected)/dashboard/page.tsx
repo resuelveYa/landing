@@ -63,8 +63,8 @@ export default async function DashboardPage() {
                 <Sparkles size={28} className="text-white" />
               </div>
               <span className={`text-sm font-bold px-4 py-2 rounded-full ${queriesPercentage > 50 ? 'bg-green-100 text-green-700' :
-                  queriesPercentage > 20 ? 'bg-yellow-100 text-yellow-700' :
-                    'bg-red-100 text-red-700'
+                queriesPercentage > 20 ? 'bg-yellow-100 text-yellow-700' :
+                  'bg-red-100 text-red-700'
                 }`}>
                 {queriesPercentage.toFixed(0)}%
               </span>
@@ -77,8 +77,8 @@ export default async function DashboardPage() {
             <div className="w-full bg-gray-200 rounded-full h-3 mb-2 overflow-hidden">
               <div
                 className={`h-3 rounded-full transition-all duration-500 ${queriesPercentage > 50 ? 'bg-gradient-to-r from-green-400 to-green-600' :
-                    queriesPercentage > 20 ? 'bg-gradient-to-r from-yellow-400 to-orange-500' :
-                      'bg-gradient-to-r from-red-400 to-red-600'
+                  queriesPercentage > 20 ? 'bg-gradient-to-r from-yellow-400 to-orange-500' :
+                    'bg-gradient-to-r from-red-400 to-red-600'
                   }`}
                 style={{ width: `${queriesPercentage}%` }}
               />
@@ -118,15 +118,13 @@ export default async function DashboardPage() {
             <p className="text-cyan-100 mb-4">
               Sube documentos y obtén insights
             </p>
-            <a
+            <Link
               href={urls.chat}
-              target="_blank"
-              rel="noopener noreferrer"
               className="inline-flex items-center gap-2 bg-white text-blue-600 px-6 py-3 rounded-xl font-bold hover:bg-gray-100 transition-all shadow-lg"
             >
               Abrir Asistente
               <ArrowRight size={18} />
-            </a>
+            </Link>
           </div>
         </div>
 
@@ -165,16 +163,14 @@ export default async function DashboardPage() {
                 </div>
               </div>
 
-              <a
+              <Link
                 href={urls.chat}
-                target="_blank"
-                rel="noopener noreferrer"
                 className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-3 transition-all shadow-xl hover:shadow-2xl transform hover:scale-105"
               >
                 <Bot size={24} />
                 Abrir Asistente IA
-                <ExternalLink size={20} />
-              </a>
+                <ArrowRight size={20} />
+              </Link>
             </div>
           </div>
 
@@ -211,16 +207,14 @@ export default async function DashboardPage() {
                 </div>
               </div>
 
-              <a
+              <Link
                 href={urls.admin}
-                target="_blank"
-                rel="noopener noreferrer"
                 className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white px-8 py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-3 transition-all shadow-xl hover:shadow-2xl transform hover:scale-105"
               >
                 <TrendingUp size={24} />
                 Abrir Flujo de Caja
-                <ExternalLink size={20} />
-              </a>
+                <ArrowRight size={20} />
+              </Link>
             </div>
           </div>
         </div>
