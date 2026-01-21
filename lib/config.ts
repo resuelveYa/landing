@@ -6,12 +6,12 @@ export const config = {
   adminUrl: process.env.NEXT_PUBLIC_ADMIN_URL ||
     (process.env.NODE_ENV === 'development'
       ? 'http://localhost:5173'
-      : 'https://cashflow.resuelveya.cl'), // Cash Flow
+      : '/cashflow'), // Cash Flow
 
   chatUrl: process.env.NEXT_PUBLIC_CHAT_URL ||
     (process.env.NODE_ENV === 'development'
       ? 'http://localhost:3003/analyze'
-      : 'https://budget.resuelveya.cl/analyze'), // Budget Analyzer
+      : '/budget/analyze'), // Budget Analyzer
 
   baseUrl: process.env.NEXT_PUBLIC_BASE_URL ||
     (process.env.NODE_ENV === 'development'

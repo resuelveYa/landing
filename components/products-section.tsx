@@ -9,7 +9,7 @@ const products = [
     subtitle: 'Análisis instantáneo y respuestas inteligentes',
     icon: Bot,
     gradient: 'from-blue-600 to-purple-600',
-    url: 'https://budget.resuelveya.cl',
+    url: '/budget',
     features: [
       {
         icon: FileText,
@@ -54,7 +54,7 @@ const products = [
     subtitle: 'Gestión financiera automatizada para tu empresa',
     icon: TrendingUp,
     gradient: 'from-emerald-600 to-teal-600',
-    url: 'https://cashflow.resuelveya.cl',
+    url: '/cashflow',
     features: [
       {
         icon: Wallet,
