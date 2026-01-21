@@ -11,7 +11,7 @@ export default clerkMiddleware(async (auth, req) => {
   const { userId } = await auth();
   if (userId && redirectUrl) {
     // Only allow redirects to our own domains for security
-    const allowedDomains = ['cashflow.resuelveya.cl', 'budget.resuelveya.cl', 'app.resuelveya.cl'];
+    const allowedDomains = ['resuelveya.cl', 'localhost'];
     try {
       const redirectUrlObj = new URL(redirectUrl);
       if (allowedDomains.includes(redirectUrlObj.hostname)) {

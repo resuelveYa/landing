@@ -50,7 +50,7 @@ export default async function DashboardPage() {
             ¡Hola, {user.firstName || 'Usuario'}! 👋
           </h2>
           <p className="text-xl text-gray-600">
-            {companyName ? `Gestiona las finanzas de ${companyName}` : 'Bienvenido a tu suite de gestión financiera con IA'}
+            {companyName ? `Gestiona las finanzas de ${companyName}` : 'Bienvenido a tu nueva suite de gestión financiera (v2)'}
           </p>
         </div>
 
@@ -62,11 +62,10 @@ export default async function DashboardPage() {
               <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
                 <Sparkles size={28} className="text-white" />
               </div>
-              <span className={`text-sm font-bold px-4 py-2 rounded-full ${
-                queriesPercentage > 50 ? 'bg-green-100 text-green-700' :
-                queriesPercentage > 20 ? 'bg-yellow-100 text-yellow-700' :
-                'bg-red-100 text-red-700'
-              }`}>
+              <span className={`text-sm font-bold px-4 py-2 rounded-full ${queriesPercentage > 50 ? 'bg-green-100 text-green-700' :
+                  queriesPercentage > 20 ? 'bg-yellow-100 text-yellow-700' :
+                    'bg-red-100 text-red-700'
+                }`}>
                 {queriesPercentage.toFixed(0)}%
               </span>
             </div>
@@ -74,14 +73,13 @@ export default async function DashboardPage() {
               {aiQueriesRemaining} <span className="text-lg text-gray-500">de {aiQueriesTotal}</span>
             </h3>
             <p className="text-gray-600 font-semibold mb-4">Consultas IA disponibles</p>
-            
+
             <div className="w-full bg-gray-200 rounded-full h-3 mb-2 overflow-hidden">
               <div
-                className={`h-3 rounded-full transition-all duration-500 ${
-                  queriesPercentage > 50 ? 'bg-gradient-to-r from-green-400 to-green-600' :
-                  queriesPercentage > 20 ? 'bg-gradient-to-r from-yellow-400 to-orange-500' :
-                  'bg-gradient-to-r from-red-400 to-red-600'
-                }`}
+                className={`h-3 rounded-full transition-all duration-500 ${queriesPercentage > 50 ? 'bg-gradient-to-r from-green-400 to-green-600' :
+                    queriesPercentage > 20 ? 'bg-gradient-to-r from-yellow-400 to-orange-500' :
+                      'bg-gradient-to-r from-red-400 to-red-600'
+                  }`}
                 style={{ width: `${queriesPercentage}%` }}
               />
             </div>
@@ -120,7 +118,7 @@ export default async function DashboardPage() {
             <p className="text-cyan-100 mb-4">
               Sube documentos y obtén insights
             </p>
-            <a 
+            <a
               href={urls.chat}
               target="_blank"
               rel="noopener noreferrer"
@@ -153,13 +151,13 @@ export default async function DashboardPage() {
                   <h4 className="font-bold text-gray-900 mb-2">Análisis de Documentos</h4>
                   <p className="text-sm text-gray-600">Sube Excel, PDF o CSV</p>
                 </div>
-                
+
                 <div className="text-center p-6 bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl">
                   <BarChart3 size={32} className="mx-auto text-purple-600 mb-3" />
                   <h4 className="font-bold text-gray-900 mb-2">Comparaciones</h4>
                   <p className="text-sm text-gray-600">Detecta desviaciones automáticamente</p>
                 </div>
-                
+
                 <div className="text-center p-6 bg-gradient-to-br from-pink-50 to-orange-50 rounded-2xl">
                   <Sparkles size={32} className="mx-auto text-pink-600 mb-3" />
                   <h4 className="font-bold text-gray-900 mb-2">Proyecciones IA</h4>
@@ -199,13 +197,13 @@ export default async function DashboardPage() {
                   <h4 className="font-bold text-gray-900 mb-2">Ingresos</h4>
                   <p className="text-sm text-gray-600">Seguimiento de entradas</p>
                 </div>
-                
+
                 <div className="text-center p-6 bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl">
                   <BarChart3 size={32} className="mx-auto text-teal-600 mb-3" />
                   <h4 className="font-bold text-gray-900 mb-2">Egresos</h4>
                   <p className="text-sm text-gray-600">Control de costos</p>
                 </div>
-                
+
                 <div className="text-center p-6 bg-gradient-to-br from-cyan-50 to-blue-50 rounded-2xl">
                   <TrendingUp size={32} className="mx-auto text-cyan-600 mb-3" />
                   <h4 className="font-bold text-gray-900 mb-2">Proyecciones</h4>

@@ -2,16 +2,9 @@
 export const config = {
   isDev: process.env.NODE_ENV === 'development',
 
-  // URLs de producción
-  adminUrl: process.env.NEXT_PUBLIC_ADMIN_URL ||
-    (process.env.NODE_ENV === 'development'
-      ? 'http://localhost:5173'
-      : '/cashflow'), // Cash Flow
-
-  chatUrl: process.env.NEXT_PUBLIC_CHAT_URL ||
-    (process.env.NODE_ENV === 'development'
-      ? 'http://localhost:3003/analyze'
-      : '/budget/analyze'), // Budget Analyzer
+  // URLs de producción (Forzamos rutas relativas para evitar subdominios antiguos)
+  adminUrl: '/cashflow',
+  chatUrl: '/budget/analyze',
 
   baseUrl: process.env.NEXT_PUBLIC_BASE_URL ||
     (process.env.NODE_ENV === 'development'
