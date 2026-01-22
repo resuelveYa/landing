@@ -71,7 +71,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider>
+    <ClerkProvider domain="resuelveya.cl">
       <html lang="es-CL">
         <body className={inter.className}>
           <GoogleAnalytics />
