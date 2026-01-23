@@ -23,6 +23,16 @@ const nextConfig = {
         destination: '/',
         permanent: true,
       },
+      {
+        source: '/budget/:path*',
+        destination: 'https://budget.resuelveya.cl/:path*',
+        permanent: true,
+      },
+      {
+        source: '/cashflow/:path*',
+        destination: 'https://cashflow.resuelveya.cl/:path*',
+        permanent: true,
+      },
     ];
   },
 
