@@ -2,9 +2,12 @@
 export const config = {
   isDev: process.env.NODE_ENV === 'development',
 
-  // URLs de producción (Forzamos rutas relativas para evitar subdominios antiguos)
-  adminUrl: '/cashflow',
-  chatUrl: '/budget/analyze',
+  // URLs de los microservicios
+  adminUrl: process.env.NEXT_PUBLIC_CASHFLOW_URL ||
+    (process.env.NODE_ENV === 'development' ? 'http://localhost:5173' : 'https://cashflow.resuelveya.cl'),
+
+  chatUrl: process.env.NEXT_PUBLIC_BUDGET_URL ||
+    (process.env.NODE_ENV === 'development' ? 'http://localhost:3001' : 'https://budget.resuelveya.cl'),
 
   baseUrl: process.env.NEXT_PUBLIC_BASE_URL ||
     (process.env.NODE_ENV === 'development'

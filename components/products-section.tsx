@@ -1,6 +1,9 @@
 'use client';
 
 import { Bot, ArrowRight, Check, Sparkles, Brain, Zap, FileText, BarChart3, TrendingUp, Wallet, Building2 } from 'lucide-react';
+import { getProductUrls } from '@/lib/config';
+
+const urls = getProductUrls();
 
 const products = [
   {
@@ -9,7 +12,7 @@ const products = [
     subtitle: 'Análisis instantáneo y respuestas inteligentes',
     icon: Bot,
     gradient: 'from-blue-600 to-purple-600',
-    url: '/budget',
+    url: urls.chat,
     features: [
       {
         icon: FileText,
@@ -54,7 +57,7 @@ const products = [
     subtitle: 'Gestión financiera automatizada para tu empresa',
     icon: TrendingUp,
     gradient: 'from-emerald-600 to-teal-600',
-    url: '/cashflow',
+    url: urls.admin,
     features: [
       {
         icon: Wallet,
