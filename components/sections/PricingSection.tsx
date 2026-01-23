@@ -1,11 +1,21 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { Check, Zap, Star, Crown } from 'lucide-react';
 import Link from 'next/link';
-import { useUser } from '@clerk/nextjs';
+import { createClient } from '@/lib/supabase/client';
 
 export function PricingSection() {
-  const { isSignedIn } = useUser();
+  const [isSignedIn, setIsSignedIn] = useState(false);
+  const supabase = createClient();
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setIsSignedIn(!!user);
+    };
+    checkAuth();
+  }, [supabase.auth]);
 
   const plans = [
     {
@@ -176,9 +186,8 @@ export function PricingSection() {
             return (
               <div
                 key={plan.id}
-                className={`relative bg-gradient-to-br ${plan.gradient} rounded-3xl p-8 border-2 ${plan.borderColor} ${
-                  plan.popular ? 'ring-4 ring-blue-200 scale-105' : ''
-                } transition-all hover:shadow-2xl`}
+                className={`relative bg-gradient-to-br ${plan.gradient} rounded-3xl p-8 border-2 ${plan.borderColor} ${plan.popular ? 'ring-4 ring-blue-200 scale-105' : ''
+                  } transition-all hover:shadow-2xl`}
               >
                 {/* Popular Badge */}
                 {plan.popular && (
@@ -237,18 +246,16 @@ export function PricingSection() {
                 <div className="space-y-3">
                   {plan.features.map((feature, idx) => (
                     <div key={idx} className="flex items-start space-x-3">
-                      <div className={`flex-shrink-0 w-5 h-5 rounded-full ${
-                        feature.included ? 'bg-green-500' : 'bg-gray-300'
-                      } flex items-center justify-center mt-0.5`}>
+                      <div className={`flex-shrink-0 w-5 h-5 rounded-full ${feature.included ? 'bg-green-500' : 'bg-gray-300'
+                        } flex items-center justify-center mt-0.5`}>
                         {feature.included ? (
                           <Check className="w-3 h-3 text-white" />
                         ) : (
                           <span className="text-white text-xs">−</span>
                         )}
                       </div>
-                      <span className={`text-sm ${
-                        feature.included ? 'text-gray-700' : 'text-gray-400'
-                      }`}>
+                      <span className={`text-sm ${feature.included ? 'text-gray-700' : 'text-gray-400'
+                        }`}>
                         {feature.text}
                       </span>
                     </div>
@@ -287,11 +294,11 @@ export function PricingSection() {
           <p className="text-gray-600 mb-4">
             ¿Necesitas algo específico? Los planes Enterprise son totalmente personalizables.
           </p>
-            <a href="mailto:soporte@resuelveya.cl"
-                className="inline-flex items-center space-x-2 text-blue-600 hover:text-blue-700 font-semibold"
-            >
-              <span>Contáctanos</span>
-              <span>→</span>
+          <a href="mailto:soporte@resuelveya.cl"
+            className="inline-flex items-center space-x-2 text-blue-600 hover:text-blue-700 font-semibold"
+          >
+            <span>Contáctanos</span>
+            <span>→</span>
           </a>
         </div>
       </div>

@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Loader2, CheckCircle, Building2, Users, Mail, Phone, ArrowRight } from 'lucide-react';
-import { useUser, SignedIn, SignedOut } from '@clerk/nextjs';
+import { createClient } from '@/lib/supabase/client';
+import { User } from '@supabase/supabase-js';
 import Link from 'next/link';
 
 const betaFormSchema = z.object({
@@ -42,24 +43,43 @@ const companySizes = [
 export default function BetaForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const { user } = useUser();
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const supabase = createClient();
+
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+      setLoading(false);
+    };
+    getUser();
+  }, [supabase.auth]);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
+    setValue
   } = useForm<BetaFormData>({
     resolver: zodResolver(betaFormSchema),
     defaultValues: {
-      fullName: user?.fullName || '',
-      email: user?.primaryEmailAddress?.emailAddress || '',
+      fullName: '',
+      email: '',
     },
   });
 
+  useEffect(() => {
+    if (user) {
+      setValue('fullName', user.user_metadata?.full_name || '');
+      setValue('email', user.email || '');
+    }
+  }, [user, setValue]);
+
   const onSubmit = async (data: BetaFormData) => {
     setIsSubmitting(true);
-    
+
     try {
       const response = await fetch('/api/beta-signup', {
         method: 'POST',
@@ -71,7 +91,7 @@ export default function BetaForm() {
 
       setIsSuccess(true);
       reset();
-      
+
       // Redirect to sign up if not logged in
       if (!user) {
         setTimeout(() => {
@@ -91,7 +111,7 @@ export default function BetaForm() {
         <CheckCircle size={64} className="mx-auto text-green-500 mb-4" />
         <h3 className="text-2xl font-bold text-gray-900 mb-2">¡Bienvenido al Beta!</h3>
         <p className="text-gray-600 mb-4">
-          Te hemos enviado un email con los próximos pasos. 
+          Te hemos enviado un email con los próximos pasos.
           Revisa tu bandeja de entrada.
         </p>
         {!user && (
@@ -104,7 +124,7 @@ export default function BetaForm() {
   return (
     <>
       {/* SI NO ESTÁ LOGEADO - Mostrar formulario */}
-      <SignedOut>
+      {!loading && !user && (
         <section id="beta" className="section-container bg-gradient-to-br from-blue-50 to-purple-50">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
@@ -112,14 +132,14 @@ export default function BetaForm() {
                 Únete al Programa Beta
               </h2>
               <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                Acceso gratuito a todas las funciones. Sin tarjeta de crédito. 
+                Acceso gratuito a todas las funciones. Sin tarjeta de crédito.
                 Ayúdanos a mejorar y recibe beneficios exclusivos.
               </p>
             </div>
 
             <div className="bg-white rounded-2xl shadow-xl p-8 sm:p-12">
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                {/* ... resto del formulario sin cambios ... */}
+                {/* ... resto del formulario ... */}
                 {/* Nombre Completo */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -275,10 +295,10 @@ export default function BetaForm() {
             </div>
           </div>
         </section>
-      </SignedOut>
+      )}
 
       {/* SI YA ESTÁ LOGEADO - Mostrar link al dashboard */}
-      <SignedIn>
+      {!loading && user && (
         <section id="beta" className="section-container bg-gradient-to-br from-blue-600 to-purple-600">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-4xl sm:text-5xl font-bold text-white mb-4">
@@ -296,7 +316,7 @@ export default function BetaForm() {
             </Link>
           </div>
         </section>
-      </SignedIn>
+      )}
     </>
   );
 }

@@ -2,7 +2,6 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import { ClerkProvider } from '@clerk/nextjs';
 import GoogleAnalytics from '@/components/GoogleAnalytics';
 import { MetaPixel } from '@/components/MetaPixel';
 
@@ -71,14 +70,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider>
-      <html lang="es-CL">
-        <body className={inter.className}>
-          <GoogleAnalytics />
-          <MetaPixel />
-          {children}
-        </body>
-      </html>
-    </ClerkProvider>
+    <html lang="es-CL">
+      <body className={inter.className}>
+        <GoogleAnalytics />
+        <MetaPixel />
+        {children}
+      </body>
+    </html>
   );
 }

@@ -1,13 +1,13 @@
-import { currentUser } from '@clerk/nextjs/server';
+import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
-import { UserButton } from '@clerk/nextjs';
-import { Sparkles, Bot, ExternalLink, Zap, BarChart3, FileText, ArrowRight, TrendingUp, DollarSign } from 'lucide-react';
+import { Sparkles, Bot, ExternalLink, Zap, BarChart3, FileText, ArrowRight, TrendingUp, DollarSign, LogOut } from 'lucide-react';
 import Link from 'next/link';
 import { getProductUrls } from '@/lib/config';
 import Logo from '@/components/logo';
 
 export default async function DashboardPage() {
-  const user = await currentUser();
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
     redirect('/sign-in');
@@ -15,10 +15,10 @@ export default async function DashboardPage() {
 
   const urls = getProductUrls();
 
-  const aiQueriesRemaining = (user.privateMetadata?.aiQueriesRemaining as number) || 50;
-  const aiQueriesTotal = (user.privateMetadata?.aiQueriesTotal as number) || 50;
-  const betaAccess = user.publicMetadata?.betaAccess as boolean;
-  const companyName = user.publicMetadata?.companyName as string;
+  const aiQueriesRemaining = (user.user_metadata?.aiQueriesRemaining as number) || 50;
+  const aiQueriesTotal = (user.user_metadata?.aiQueriesTotal as number) || 50;
+  const betaAccess = user.user_metadata?.betaAccess as boolean;
+  const companyName = user.user_metadata?.companyName as string;
 
   const queriesUsed = aiQueriesTotal - aiQueriesRemaining;
   const queriesPercentage = (aiQueriesRemaining / aiQueriesTotal) * 100;
@@ -37,7 +37,20 @@ export default async function DashboardPage() {
                 </span>
               )}
             </div>
-            <UserButton afterSignOutUrl="/" />
+            <div className="flex items-center space-x-4">
+              <div className="text-sm text-gray-600 font-medium">
+                {user.email}
+              </div>
+              <form action="/api/auth/sign-out" method="post">
+                <button
+                  type="submit"
+                  className="p-2 text-gray-500 hover:text-red-600 transition-colors"
+                  title="Cerrar Sesión"
+                >
+                  <LogOut size={24} />
+                </button>
+              </form>
+            </div>
           </div>
         </div>
       </header>
@@ -47,7 +60,7 @@ export default async function DashboardPage() {
         {/* Welcome Section */}
         <div className="mb-8">
           <h2 className="text-4xl font-black text-gray-900 mb-2">
-            ¡Hola, {user.firstName || 'Usuario'}! 👋
+            ¡Hola, {user.user_metadata?.full_name?.split(' ')[0] || 'Usuario'}! 👋
           </h2>
           <p className="text-xl text-gray-600">
             {companyName ? `Gestiona las finanzas de ${companyName}` : 'Bienvenido a tu nueva suite de gestión financiera (v2)'}

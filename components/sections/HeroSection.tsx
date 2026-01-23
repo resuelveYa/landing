@@ -1,20 +1,41 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { ArrowRight, Sparkles, Bot } from 'lucide-react';
 import Link from 'next/link';
-import { SignedIn, SignedOut } from '@clerk/nextjs';
+import { createClient } from '@/lib/supabase/client';
+import { User } from '@supabase/supabase-js';
 
 export default function HeroSection() {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const supabase = createClient();
+
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+      setLoading(false);
+    };
+    getUser();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [supabase.auth]);
+
   return (
     <section className="relative pt-32 pb-20 sm:pt-40 sm:pb-24 overflow-hidden">
       {/* Background Gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 -z-10" />
-      
+
       {/* Animated Blobs */}
       <div className="absolute top-0 left-0 w-96 h-96 bg-cyan-400 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-blob -z-10" />
       <div className="absolute top-0 right-0 w-96 h-96 bg-purple-400 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-blob animation-delay-2000 -z-10" />
       <div className="absolute bottom-0 left-1/2 w-96 h-96 bg-pink-400 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-blob animation-delay-4000 -z-10" />
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-4xl mx-auto">
           {/* Badge */}
@@ -33,44 +54,46 @@ export default function HeroSection() {
 
           {/* Subheadline */}
           <p className="text-xl sm:text-2xl text-white/90 mb-10 max-w-3xl mx-auto drop-shadow-lg">
-            Sube tus documentos y obtén análisis instantáneos, comparaciones inteligentes y proyecciones precisas. 
+            Sube tus documentos y obtén análisis instantáneos, comparaciones inteligentes y proyecciones precisas.
             Todo en segundos.
           </p>
 
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-            <SignedOut>
-              <a 
-                href="#beta"
-                className="group relative inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full overflow-hidden shadow-2xl hover:shadow-cyan-500/50 transition-all duration-300 hover:scale-105"
-              >
-                <span className="relative z-10 flex items-center gap-2">
-                  Probar Gratis
-                  <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-                </span>
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity" />
-              </a>
-              
-              <Link 
-                href="/sign-up"
-                className="inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white bg-white/10 backdrop-blur-md border-2 border-white/30 rounded-full hover:bg-white/20 transition-all duration-300 hover:scale-105"
-              >
-                <Bot size={20} className="mr-2" />
-                Ver Demo
-              </Link>
-            </SignedOut>
+            {!loading && (
+              user ? (
+                <Link
+                  href="/dashboard"
+                  className="group relative inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full overflow-hidden shadow-2xl hover:shadow-cyan-500/50 transition-all duration-300 hover:scale-105"
+                >
+                  <span className="relative z-10 flex items-center gap-2">
+                    Ir al Dashboard
+                    <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                  </span>
+                </Link>
+              ) : (
+                <>
+                  <a
+                    href="#beta"
+                    className="group relative inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full overflow-hidden shadow-2xl hover:shadow-cyan-500/50 transition-all duration-300 hover:scale-105"
+                  >
+                    <span className="relative z-10 flex items-center gap-2">
+                      Probar Gratis
+                      <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                    </span>
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </a>
 
-            <SignedIn>
-              <Link 
-                href="/dashboard"
-                className="group relative inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full overflow-hidden shadow-2xl hover:shadow-cyan-500/50 transition-all duration-300 hover:scale-105"
-              >
-                <span className="relative z-10 flex items-center gap-2">
-                  Ir al Dashboard
-                  <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-                </span>
-              </Link>
-            </SignedIn>
+                  <Link
+                    href="/sign-up"
+                    className="inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white bg-white/10 backdrop-blur-md border-2 border-white/30 rounded-full hover:bg-white/20 transition-all duration-300 hover:scale-105"
+                  >
+                    <Bot size={20} className="mr-2" />
+                    Ver Demo
+                  </Link>
+                </>
+              )
+            )}
           </div>
 
           {/* Social Proof */}

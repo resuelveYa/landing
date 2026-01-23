@@ -1,0 +1,20 @@
+{
+  "rewrites": [
+    {
+      "source": "/budget/(.*)",
+      "destination": "https://resuelveya-budget.vercel.app/budget/$1"
+    },
+    {
+      "source": "/budget",
+      "destination": "https://resuelveya-budget.vercel.app/budget"
+    },
+    {
+      "source": "/cashflow/(.*)",
+      "destination": "https://resuelveya-cashflow.vercel.app/cashflow/$1"
+    },
+    {
+      "source": "/cashflow",
+      "destination": "https://resuelveya-cashflow.vercel.app/cashflow"
+    }
+  ]
+}
