@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
+export const dynamic = 'force-dynamic';
 import { redirect } from 'next/navigation';
 import { Sparkles, Bot, ExternalLink, Zap, BarChart3, FileText, ArrowRight, TrendingUp, DollarSign, LogOut } from 'lucide-react';
 import Link from 'next/link';

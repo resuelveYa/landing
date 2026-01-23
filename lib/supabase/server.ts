@@ -7,7 +7,11 @@ export async function createClient() {
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
   if (!url || !anonKey) {
-    return {} as any;
+    return {
+      auth: {
+        getUser: () => Promise.resolve({ data: { user: null }, error: null }),
+      }
+    } as any;
   }
 
   const cookieStore = await cookies()
