@@ -4,6 +4,7 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
+import { Mail, Lock, Loader2, Github, CheckCircle2, AlertCircle, ArrowRight } from 'lucide-react'
 
 interface AuthFormProps {
   mode: 'sign-in' | 'sign-up'
@@ -14,6 +15,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [showSuccess, setShowSuccess] = useState(false)
   const supabase = createClient()
   const router = useRouter()
 
@@ -23,96 +25,157 @@ export default function AuthForm({ mode }: AuthFormProps) {
     setError(null)
 
     try {
+      const trimmedEmail = email.trim()
       if (mode === 'sign-in') {
         const { error } = await supabase.auth.signInWithPassword({
-          email,
+          email: trimmedEmail,
           password,
         })
         if (error) throw error
+        router.push('/dashboard')
+        router.refresh()
       } else {
         const { error } = await supabase.auth.signUp({
-          email,
+          email: trimmedEmail,
           password,
           options: {
             emailRedirectTo: `${window.location.origin}/api/auth/callback`,
           },
         })
         if (error) throw error
-        alert('Revisa tu correo para confirmar tu cuenta!')
+        setShowSuccess(true)
       }
-      router.push('/dashboard')
-      router.refresh()
     } catch (err: any) {
-      setError(err.message || 'Ocurrió un error')
+      console.error('Auth Error:', err)
+      setError(err.message || 'Ocurrió un error inesperado. Inténtalo de nuevo.')
     } finally {
       setLoading(false)
     }
   }
 
   const handleGithubLogin = async () => {
-    await supabase.auth.signInWithOAuth({
-      provider: 'github',
-      options: {
-        redirectTo: `${window.location.origin}/api/auth/callback`,
-      },
-    })
+    setLoading(true)
+    try {
+      await supabase.auth.signInWithOAuth({
+        provider: 'github',
+        options: {
+          redirectTo: `${window.location.origin}/api/auth/callback`,
+        },
+      })
+    } catch (err) {
+      setError('Error al conectar con GitHub')
+      setLoading(false)
+    }
+  }
+
+  if (showSuccess) {
+    return (
+      <div className="bg-white p-10 rounded-2xl shadow-2xl border border-gray-100 text-center animate-in fade-in zoom-in duration-500">
+        <div className="flex justify-center mb-6">
+          <div className="bg-green-100 p-4 rounded-full">
+            <CheckCircle2 className="w-12 h-12 text-green-600" />
+          </div>
+        </div>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">¡Casi listo!</h2>
+        <p className="text-gray-600 mb-8">
+          Hemos enviado un enlace de confirmación a <span className="font-semibold text-gray-900">{email}</span>.
+        </p>
+        <div className="space-y-4">
+          <button
+            onClick={() => router.push('/sign-in')}
+            className="w-full bg-blue-600 text-white py-4 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg flex items-center justify-center gap-2"
+          >
+            Ir al inicio de sesión <ArrowRight className="w-5 h-5" />
+          </button>
+          <p className="text-sm text-gray-500">
+            ¿No recibiste nada? Revisa tu carpeta de spam o intenta registrarte de nuevo en unos minutos.
+          </p>
+        </div>
+      </div>
+    )
   }
 
   return (
-    <div className="bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
-      <form onSubmit={handleAuth} className="space-y-4">
+    <div className="bg-white p-8 rounded-2xl shadow-2xl border border-gray-100 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <form onSubmit={handleAuth} className="space-y-5">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 block w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-            placeholder="tu@email.com"
-            required
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Contraseña</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 block w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-            placeholder="••••••••"
-            required
-          />
+          <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">
+            Correo electrónico
+          </label>
+          <div className="relative group">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-blue-500 transition-colors">
+              <Mail className="w-5 h-5" />
+            </div>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="mt-1 block w-full pl-11 pr-4 py-3.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all placeholder:text-gray-400"
+              placeholder="nombre@empresa.com"
+              required
+            />
+          </div>
         </div>
 
-        {error && <p className="text-red-500 text-sm">{error}</p>}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">
+            Contraseña
+          </label>
+          <div className="relative group">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-blue-500 transition-colors">
+              <Lock className="w-5 h-5" />
+            </div>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="mt-1 block w-full pl-11 pr-4 py-3.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all placeholder:text-gray-400"
+              placeholder="••••••••"
+              required
+            />
+          </div>
+        </div>
+
+        {error && (
+          <div className="bg-red-50 text-red-600 p-4 rounded-xl text-sm flex gap-3 items-center border border-red-100 animate-shake">
+            <AlertCircle className="w-5 h-5 flex-shrink-0" />
+            <p>{error}</p>
+          </div>
+        )}
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg items-center justify-center flex gap-2"
+          className="w-full bg-blue-600 text-white py-4 rounded-xl font-bold hover:bg-blue-700 disabled:bg-blue-300 transition-all shadow-lg hover:shadow-blue-200 items-center justify-center flex gap-2 active:scale-[0.98]"
         >
-          {loading ? 'Cargando...' : mode === 'sign-in' ? 'Iniciar Sesión' : 'Registrarse'}
+          {loading ? (
+            <Loader2 className="w-5 h-5 animate-spin" />
+          ) : (
+            <>
+              {mode === 'sign-in' ? 'Entrar a mi cuenta' : 'Crear mi cuenta gratis'}
+              <ArrowRight className="w-5 h-5 ml-1" />
+            </>
+          )}
         </button>
       </form>
 
-      <div className="mt-6">
+      <div className="mt-8">
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-200"></div>
+            <div className="w-full border-t border-gray-100"></div>
           </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white text-gray-500">O continúa con</span>
+          <div className="relative flex justify-center text-xs uppercase tracking-widest font-semibold">
+            <span className="px-4 bg-white text-gray-400 italic">O usa tu red profesional</span>
           </div>
         </div>
 
         <button
           onClick={handleGithubLogin}
-          className="mt-4 w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl border border-gray-300 hover:bg-gray-50 transition-all font-semibold"
+          disabled={loading}
+          className="mt-6 w-full flex items-center justify-center gap-3 px-4 py-4 rounded-xl border border-gray-200 hover:bg-gray-50 hover:border-gray-300 transition-all font-bold text-gray-700"
         >
-          <svg className="w-5 h-5" viewBox="0 0 24 24">
-            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.042-1.416-4.042-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
-          </svg>
-          GitHub
+          <Github className="w-6 h-6" />
+          Continuar con GitHub
         </button>
       </div>
     </div>
