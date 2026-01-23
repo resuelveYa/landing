@@ -55,10 +55,11 @@ export async function middleware(request: NextRequest) {
 
   // Handle cross-app redirects if user is signed in
   if (user && redirectUrl) {
-    const allowedDomains = ['resuelveya.cl', 'localhost']
+    const allowedDomains = ['resuelveya.cl', 'budget.resuelveya.cl', 'cashflow.resuelveya.cl', 'localhost']
     try {
       const redirectUrlObj = new URL(redirectUrl)
-      if (allowedDomains.includes(redirectUrlObj.hostname)) {
+      // Check if hostname ends with resuelveya.cl or is localhost
+      if (redirectUrlObj.hostname.endsWith('resuelveya.cl') || redirectUrlObj.hostname === 'localhost') {
         return NextResponse.redirect(redirectUrl)
       }
     } catch (e) {

@@ -10,6 +10,7 @@ export async function createClient() {
     return {
       auth: {
         getUser: () => Promise.resolve({ data: { user: null }, error: null }),
+        signOut: () => Promise.resolve({ error: null }),
       }
     } as any;
   }
@@ -27,7 +28,10 @@ export async function createClient() {
         setAll(cookiesToSet) {
           try {
             cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
+              cookieStore.set(name, value, {
+                ...options,
+                domain: '.resuelveya.cl', // Compartir entre subdominios
+              })
             )
           } catch {
             // The `setAll` method was called from a Server Component.
