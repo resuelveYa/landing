@@ -1,4 +1,5 @@
 // app/page.tsx
+export const dynamic = 'force-dynamic';
 import Navigation from '@/components/navigation';
 import HeroSection from '@/components/sections/HeroSection';
 import ProductsSection from '@/components/products-section';
