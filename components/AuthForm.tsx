@@ -3,7 +3,7 @@
 
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Mail, Lock, Loader2, Github, CheckCircle2, AlertCircle, ArrowRight } from 'lucide-react'
 
 interface AuthFormProps {
@@ -18,6 +18,8 @@ export default function AuthForm({ mode }: AuthFormProps) {
   const [showSuccess, setShowSuccess] = useState(false)
   const supabase = createClient()
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const redirectUrl = searchParams.get('redirect_url')
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -32,8 +34,13 @@ export default function AuthForm({ mode }: AuthFormProps) {
           password,
         })
         if (error) throw error
-        router.push('/dashboard')
-        router.refresh()
+
+        if (redirectUrl) {
+          window.location.href = redirectUrl
+        } else {
+          router.push('/dashboard')
+          router.refresh()
+        }
       } else {
         const { error } = await supabase.auth.signUp({
           email: trimmedEmail,
