@@ -13,6 +13,14 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next({ request })
   }
 
+  // Detect development mode
+  const isDevMode = process.env.NEXT_PUBLIC_DEV_MODE === 'true' || process.env.NODE_ENV === 'development'
+
+  // Cookie config varies between dev and production
+  const cookieConfig = isDevMode
+    ? { path: '/', sameSite: 'lax' as const, secure: false }
+    : { domain: '.resuelveya.cl', path: '/', sameSite: 'lax' as const, secure: true }
+
   const supabase = createServerClient(
     supabaseUrl,
     supabaseAnonKey,
@@ -27,10 +35,14 @@ export async function middleware(request: NextRequest) {
             request,
           })
           cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
+            supabaseResponse.cookies.set(name, value, {
+              ...options,
+              ...cookieConfig,
+            })
           )
         },
       },
+      cookieOptions: cookieConfig,
     }
   )
 
@@ -60,7 +72,14 @@ export async function middleware(request: NextRequest) {
       const redirectUrlObj = new URL(redirectUrl)
       // Check if hostname ends with resuelveya.cl or is localhost
       if (redirectUrlObj.hostname.endsWith('resuelveya.cl') || redirectUrlObj.hostname === 'localhost') {
-        return NextResponse.redirect(redirectUrl)
+        const response = NextResponse.redirect(redirectUrl)
+        // Ensure cookies are passed to the redirect response
+        supabaseResponse.cookies.getAll().forEach(cookie => {
+          response.cookies.set(cookie.name, cookie.value, {
+            ...cookieConfig,
+          })
+        })
+        return response
       }
     } catch (e) {
       // Invalid URL, ignore
