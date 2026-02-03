@@ -5,10 +5,13 @@ import { cookies } from 'next/headers'
 // Detect development mode
 const isDevMode = process.env.NEXT_PUBLIC_DEV_MODE === 'true' || process.env.NODE_ENV === 'development'
 
+// detect if we are on a resuelveya.cl domain (including subdomains)
+const isProduction = process.env.NODE_ENV === 'production' && !process.env.NEXT_PUBLIC_DEV_MODE
+
 // Cookie config varies between dev and production
-const cookieConfig = isDevMode
-  ? { path: '/', sameSite: 'lax' as const, secure: false }
-  : { domain: '.resuelveya.cl', path: '/', sameSite: 'lax' as const, secure: true }
+const cookieConfig = isProduction
+  ? { domain: '.resuelveya.cl', path: '/', sameSite: 'lax' as const, secure: true }
+  : { path: '/', sameSite: 'lax' as const, secure: false }
 
 export async function createClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL

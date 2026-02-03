@@ -7,9 +7,15 @@ const isDevMode = typeof window !== 'undefined'
   : process.env.NEXT_PUBLIC_DEV_MODE === 'true' || process.env.NODE_ENV === 'development'
 
 // Cookie config varies between dev and production
-const cookieConfig = isDevMode
-  ? { path: '/', sameSite: 'lax' as const, secure: false }
-  : { domain: '.resuelveya.cl', path: '/', sameSite: 'lax' as const, secure: true }
+// detect if we are on a resuelveya.cl domain (including subdomains)
+const isProduction = typeof window !== 'undefined'
+  ? window.location.hostname.endsWith('resuelveya.cl')
+  : process.env.NODE_ENV === 'production' && !process.env.NEXT_PUBLIC_DEV_MODE
+
+// Cookie config varies between dev and production
+const cookieConfig = isProduction
+  ? { domain: '.resuelveya.cl', path: '/', sameSite: 'lax' as const, secure: true }
+  : { path: '/', sameSite: 'lax' as const, secure: false }
 
 export function createClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
