@@ -50,9 +50,31 @@ export async function middleware(request: NextRequest) {
   // supabase.auth.getUser(). A simple mistake could make it very hard to debug
   // issues with users being randomly logged out.
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  let user = null
+  try {
+    const { data, error } = await supabase.auth.getUser()
+    if (error) {
+      // If there's an auth error (e.g., invalid refresh token), clear the session cookies
+      // This prevents infinite retry loops that cause 429 rate limiting
+      console.error('Auth error in middleware:', error.message)
+
+      // Clear all Supabase auth cookies to reset the corrupted session
+      const cookiesToClear = request.cookies.getAll()
+        .filter(c => c.name.startsWith('sb-'))
+
+      cookiesToClear.forEach(cookie => {
+        supabaseResponse.cookies.set(cookie.name, '', {
+          ...cookieConfig,
+          maxAge: 0,
+        })
+      })
+    } else {
+      user = data.user
+    }
+  } catch (error: any) {
+    console.error('Unexpected auth error in middleware:', error?.message || error)
+    // On unexpected errors, continue without user (treat as logged out)
+  }
 
   const url = new URL(request.url)
   const isDashboard = url.pathname.startsWith('/dashboard')
