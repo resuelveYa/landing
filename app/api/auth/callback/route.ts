@@ -6,8 +6,16 @@ import { createClient } from '@/lib/supabase/server'
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
+  const error_description = searchParams.get('error_description')
+
   // if "next" is in param, use it as the redirection URL
   const next = searchParams.get('next') ?? '/dashboard'
+
+  // Handle OAuth errors from Supabase
+  if (error_description) {
+    console.error('OAuth error from Supabase:', error_description)
+    return NextResponse.redirect(`${origin}/sign-in?error=${encodeURIComponent(error_description)}`)
+  }
 
   if (code) {
     const supabase = await createClient()
@@ -23,6 +31,9 @@ export async function GET(request: Request) {
       } else {
         return NextResponse.redirect(`${origin}${next}`)
       }
+    } else {
+      // Log the error for debugging
+      console.error('exchangeCodeForSession error:', error.message, error)
     }
   }
 
