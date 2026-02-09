@@ -13,13 +13,14 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next({ request })
   }
 
-  // Detect development mode
-  const isDevMode = process.env.NEXT_PUBLIC_DEV_MODE === 'true' || process.env.NODE_ENV === 'development'
+  // Detect production based on hostname - more reliable than env vars
+  const hostname = request.headers.get('host') || ''
+  const isProduction = hostname.endsWith('resuelveya.cl')
 
   // Cookie config varies between dev and production
-  const cookieConfig = isDevMode
-    ? { path: '/', sameSite: 'lax' as const, secure: false }
-    : { domain: '.resuelveya.cl', path: '/', sameSite: 'lax' as const, secure: true }
+  const cookieConfig = isProduction
+    ? { domain: '.resuelveya.cl', path: '/', sameSite: 'lax' as const, secure: true }
+    : { path: '/', sameSite: 'lax' as const, secure: false }
 
   const supabase = createServerClient(
     supabaseUrl,
