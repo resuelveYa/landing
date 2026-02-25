@@ -234,6 +234,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
           </button>
         </div>
       </div>
+
     </div>
   )
 }

@@ -7,9 +7,7 @@ export default function SignUpPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-violet-50 flex flex-col">
       <header className="w-full py-6 px-4">
         <div className="max-w-7xl mx-auto">
-          <Link href="/">
-            <Logo size="sm" />
-          </Link>
+          <Logo size="sm" />
         </div>
       </header>
 

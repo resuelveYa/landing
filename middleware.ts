@@ -55,20 +55,23 @@ export async function middleware(request: NextRequest) {
   try {
     const { data, error } = await supabase.auth.getUser()
     if (error) {
-      // If there's an auth error (e.g., invalid refresh token), clear the session cookies
-      // This prevents infinite retry loops that cause 429 rate limiting
-      console.error('Auth error in middleware:', error.message)
+      // If there's an auth error, log it.
+      // But only clear cookies if it's a "real" error (e.g., token refresh failure).
+      // "Auth session missing!" is normal when there's no session yet.
+      if (error.message !== 'Auth session missing!') {
+        console.error('Auth error in middleware (corrupted session):', error.message)
 
-      // Clear all Supabase auth cookies to reset the corrupted session
-      const cookiesToClear = request.cookies.getAll()
-        .filter(c => c.name.startsWith('sb-'))
+        // Clear all Supabase auth cookies to reset the corrupted session
+        const cookiesToClear = request.cookies.getAll()
+          .filter(c => c.name.startsWith('sb-'))
 
-      cookiesToClear.forEach(cookie => {
-        supabaseResponse.cookies.set(cookie.name, '', {
-          ...cookieConfig,
-          maxAge: 0,
+        cookiesToClear.forEach(cookie => {
+          supabaseResponse.cookies.set(cookie.name, '', {
+            ...cookieConfig,
+            maxAge: 0,
+          })
         })
-      })
+      }
     } else {
       user = data.user
     }
