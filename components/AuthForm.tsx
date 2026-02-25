@@ -60,13 +60,24 @@ export default function AuthForm({ mode }: AuthFormProps) {
     }
   }
 
+  const getRedirectUrl = () => {
+    // Definimos explicitamente la URL base si estamos en producción
+    let origin = process.env.NEXT_PUBLIC_BASE_URL || 'https://resuelveya.cl';
+    if (typeof window !== 'undefined') {
+      origin = window.location.origin;
+    }
+    // Aseguramos que termine sin barra
+    origin = origin.replace(/\/$/, '');
+    return `${origin}/api/auth/callback`;
+  };
+
   const handleGithubLogin = async () => {
     setLoading(true)
     try {
       await supabase.auth.signInWithOAuth({
         provider: 'github',
         options: {
-          redirectTo: `${window.location.origin}/api/auth/callback`,
+          redirectTo: getRedirectUrl(),
         },
       })
     } catch (err) {
@@ -85,7 +96,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
             access_type: 'offline',
             prompt: 'consent',
           },
-          redirectTo: `${window.location.origin}/api/auth/callback`,
+          redirectTo: getRedirectUrl(),
         },
       })
     } catch (err) {
