@@ -1,19 +1,7 @@
 // app/api/auth/callback/route.ts
+import { NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
-
-function serializeCookie(name: string, value: string, options: Record<string, any>): string {
-  // Do NOT URI-encode: Supabase stores base64 tokens containing =, +, / which are
-  // valid cookie value characters but would be broken by encodeURIComponent
-  let cookie = `${name}=${value}`
-  if (options.maxAge !== undefined) cookie += `; Max-Age=${options.maxAge}`
-  if (options.domain) cookie += `; Domain=${options.domain}`
-  if (options.path) cookie += `; Path=${options.path}`
-  if (options.expires instanceof Date) cookie += `; Expires=${options.expires.toUTCString()}`
-  if (options.httpOnly) cookie += '; HttpOnly'
-  if (options.secure) cookie += '; Secure'
-  if (options.sameSite) cookie += `; SameSite=${options.sameSite}`
-  return cookie
-}
+import { cookies } from 'next/headers'
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
@@ -23,7 +11,7 @@ export async function GET(request: Request) {
 
   if (error_description) {
     console.error('OAuth error from Supabase:', error_description)
-    return Response.redirect(`${origin}/sign-in?error=${encodeURIComponent(error_description)}`)
+    return NextResponse.redirect(`${origin}/sign-in?error=${encodeURIComponent(error_description)}`)
   }
 
   if (code) {
@@ -32,17 +20,7 @@ export async function GET(request: Request) {
       ? { domain: '.resuelveya.cl', path: '/', sameSite: 'lax' as const, secure: true }
       : { path: '/', sameSite: 'lax' as const, secure: false }
 
-    // Collect cookies to set from Supabase
-    const cookiesToSet: Array<{ name: string; value: string; options: Record<string, any> }> = []
-
-    // Parse incoming request cookies for PKCE verifier
-    const requestCookies = request.headers
-      .get('cookie')
-      ?.split('; ')
-      .map((c) => {
-        const [name, ...rest] = c.split('=')
-        return { name: name.trim(), value: rest.join('=') }
-      }) ?? []
+    const cookieStore = await cookies()
 
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -50,12 +28,11 @@ export async function GET(request: Request) {
       {
         cookies: {
           getAll() {
-            return requestCookies
+            return cookieStore.getAll()
           },
-          setAll(incoming: Array<{ name: string; value: string; options: Record<string, any> }>) {
-            // Capture all cookies into our array instead of writing to response yet
-            incoming.forEach(({ name, value, options }) => {
-              cookiesToSet.push({ name, value, options: { ...options, ...cookieConfig } })
+          setAll(cookiesToSet) {
+            cookiesToSet.forEach(({ name, value, options }) => {
+              cookieStore.set(name, value, { ...options, ...cookieConfig })
             })
           },
         },
@@ -68,34 +45,18 @@ export async function GET(request: Request) {
     if (!error) {
       const forwardedHost = request.headers.get('x-forwarded-host')
       const isLocalEnv = process.env.NODE_ENV === 'development'
-      let redirectDest = `${origin}${next}`
-      if (!isLocalEnv && forwardedHost) {
-        redirectDest = `https://${forwardedHost}${next}`
+      if (isLocalEnv) {
+        return NextResponse.redirect(`${origin}${next}`)
+      } else if (forwardedHost) {
+        return NextResponse.redirect(`https://${forwardedHost}${next}`)
+      } else {
+        return NextResponse.redirect(`${origin}${next}`)
       }
-
-      // Build the HTML response with all Set-Cookie headers attached
-      const html = `<!DOCTYPE html>
-<html>
-<head><meta charset="utf-8"><title>Iniciando sesión...</title></head>
-<body>
-<p>Iniciando sesión, espera un momento...</p>
-<script>window.location.replace(${JSON.stringify(redirectDest)});</script>
-</body>
-</html>`
-
-      const headers = new Headers({ 'Content-Type': 'text/html; charset=utf-8' })
-
-      // Attach every Set-Cookie header manually so the browser actually saves them
-      cookiesToSet.forEach(({ name, value, options }) => {
-        headers.append('Set-Cookie', serializeCookie(name, value, options))
-      })
-
-      return new Response(html, { status: 200, headers })
     } else {
-      console.error('exchangeCodeForSession error:', error.message, error)
-      return Response.redirect(`${origin}/sign-in?error=${encodeURIComponent(error.message)}`)
+      console.error('exchangeCodeForSession error:', error.message)
+      return NextResponse.redirect(`${origin}/sign-in?error=${encodeURIComponent(error.message)}`)
     }
   }
 
-  return Response.redirect(`${origin}/auth/auth-code-error`)
+  return NextResponse.redirect(`${origin}/auth/auth-code-error`)
 }
