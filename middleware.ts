@@ -55,39 +55,29 @@ export async function middleware(request: NextRequest) {
   try {
     const { data, error } = await supabase.auth.getUser()
     if (error) {
-      // If there's an auth error, log it.
-      // But only clear cookies if it's a "real" error (e.g., token refresh failure).
-      // "Auth session missing!" is normal when there's no session yet.
       if (error.message !== 'Auth session missing!') {
-        console.error('Auth error in middleware (corrupted session):', error.message)
-
-        // Clear all Supabase auth cookies to reset the corrupted session
-        const cookiesToClear = request.cookies.getAll()
-          .filter(c => c.name.startsWith('sb-'))
-
+        console.error('Auth error in middleware:', error.message)
+        // Clear cookies
+        const cookiesToClear = request.cookies.getAll().filter(c => c.name.startsWith('sb-'))
         cookiesToClear.forEach(cookie => {
-          supabaseResponse.cookies.set(cookie.name, '', {
-            ...cookieConfig,
-            maxAge: 0,
-          })
+          supabaseResponse.cookies.set(cookie.name, '', { ...cookieConfig, maxAge: 0 })
         })
+        const loginUrl = new URL(`/sign-in?reason=session_error&msg=${encodeURIComponent(error.message)}`, request.url)
+        return NextResponse.redirect(loginUrl)
       }
     } else {
       user = data.user
     }
   } catch (error: any) {
     console.error('Unexpected auth error in middleware:', error?.message || error)
-    // On unexpected errors, continue without user (treat as logged out)
   }
 
   const url = new URL(request.url)
   const isDashboard = url.pathname.startsWith('/dashboard')
   const redirectUrl = url.searchParams.get('redirect_url')
 
-  // Auth protection logic
   if (!user && isDashboard) {
-    // no user, potentially respond by redirecting the user to the login page
-    const loginUrl = new URL('/sign-in', request.url)
+    const loginUrl = new URL('/sign-in?reason=no_user', request.url)
     return NextResponse.redirect(loginUrl)
   }
 
