@@ -1,7 +1,6 @@
 // app/api/auth/callback/route.ts
 import { NextResponse } from 'next/server'
-// The client you created in Step 2
-import { createClient } from '@/lib/supabase/server'
+import { createServerClient } from '@supabase/ssr'
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
@@ -18,25 +17,54 @@ export async function GET(request: Request) {
   }
 
   if (code) {
-    const supabase = await createClient()
-    const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+
+    const isProduction = process.env.NODE_ENV === 'production'
+    const cookieConfig = isProduction
+      ? { domain: '.resuelveya.cl', path: '/', sameSite: 'lax' as const, secure: true }
+      : { path: '/', sameSite: 'lax' as const, secure: false }
+
+    // Determine the final redirect destination
+    const forwardedHost = request.headers.get('x-forwarded-host')
+    const isLocalEnv = process.env.NODE_ENV === 'development'
+    let redirectDest = `${origin}${next}`
+    if (!isLocalEnv && forwardedHost) {
+      redirectDest = `https://${forwardedHost}${next}`
+    }
+
+    // Create the redirect response first — we'll attach cookies to it
+    const redirectResponse = NextResponse.redirect(redirectDest)
+
+    // Create a Supabase client that writes cookies directly into the redirect response
+    const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
+      cookies: {
+        getAll() {
+          return request.headers
+            .get('cookie')
+            ?.split('; ')
+            .map((cookie) => {
+              const [name, ...rest] = cookie.split('=')
+              return { name: name.trim(), value: rest.join('=') }
+            }) ?? []
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) => {
+            redirectResponse.cookies.set(name, value, {
+              ...options,
+              ...cookieConfig,
+            })
+          })
+        },
+      },
+      cookieOptions: cookieConfig,
+    })
+
+    const { error } = await supabase.auth.exchangeCodeForSession(code)
 
     if (!error) {
-      const forwardedHost = request.headers.get('x-forwarded-host') // i.e. vercel.com
-      const isLocalEnv = process.env.NODE_ENV === 'development'
-
-      let redirectUrl = `${origin}${next}`
-      if (!isLocalEnv && forwardedHost) {
-        redirectUrl = `https://${forwardedHost}${next}`
-      }
-
-      const finalUrl = new URL(redirectUrl)
-      // Indicate if Supabase returned a valid session object or null
-      finalUrl.searchParams.set('auth_exchange_status', data?.session ? 'session_present' : 'session_empty')
-
-      return NextResponse.redirect(finalUrl.toString())
+      return redirectResponse
     } else {
-      // Log the error for debugging
       console.error('exchangeCodeForSession error:', error.message, error)
       return NextResponse.redirect(`${origin}/sign-in?error=${encodeURIComponent(error.message)}`)
     }
