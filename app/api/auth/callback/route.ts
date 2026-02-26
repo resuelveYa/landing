@@ -2,7 +2,9 @@
 import { createServerClient } from '@supabase/ssr'
 
 function serializeCookie(name: string, value: string, options: Record<string, any>): string {
-  let cookie = `${encodeURIComponent(name)}=${encodeURIComponent(value)}`
+  // Do NOT URI-encode: Supabase stores base64 tokens containing =, +, / which are
+  // valid cookie value characters but would be broken by encodeURIComponent
+  let cookie = `${name}=${value}`
   if (options.maxAge !== undefined) cookie += `; Max-Age=${options.maxAge}`
   if (options.domain) cookie += `; Domain=${options.domain}`
   if (options.path) cookie += `; Path=${options.path}`
@@ -27,8 +29,8 @@ export async function GET(request: Request) {
   if (code) {
     const isProduction = process.env.NODE_ENV === 'production'
     const cookieConfig = isProduction
-      ? { domain: '.resuelveya.cl', path: '/', sameSite: 'Lax' as const, secure: true }
-      : { path: '/', sameSite: 'Lax' as const, secure: false }
+      ? { domain: '.resuelveya.cl', path: '/', sameSite: 'lax' as const, secure: true }
+      : { path: '/', sameSite: 'lax' as const, secure: false }
 
     // Collect cookies to set from Supabase
     const cookiesToSet: Array<{ name: string; value: string; options: Record<string, any> }> = []
@@ -50,7 +52,7 @@ export async function GET(request: Request) {
           getAll() {
             return requestCookies
           },
-          setAll(incoming) {
+          setAll(incoming: Array<{ name: string; value: string; options: Record<string, any> }>) {
             // Capture all cookies into our array instead of writing to response yet
             incoming.forEach(({ name, value, options }) => {
               cookiesToSet.push({ name, value, options: { ...options, ...cookieConfig } })
