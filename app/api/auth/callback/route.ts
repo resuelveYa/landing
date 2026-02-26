@@ -3,6 +3,11 @@ import { NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
+// Helper: determines if two URLs have different origins
+function isCrossOrigin(a: string, b: string): boolean {
+  try { return new URL(a).origin !== new URL(b).origin } catch { return false }
+}
+
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
@@ -43,10 +48,23 @@ export async function GET(request: Request) {
     const { error } = await supabase.auth.exchangeCodeForSession(code)
 
     if (!error) {
+      // Get the established session to support cross-origin token handoff in dev
+      const sessionResult = await supabase.auth.getSession()
+      const session = sessionResult.data.session
+
       const forwardedHost = request.headers.get('x-forwarded-host')
       const isLocalEnv = process.env.NODE_ENV === 'development'
       if (isLocalEnv) {
-        return NextResponse.redirect(`${origin}${next}`)
+        const resolvedNext = `${origin}${next}`
+
+        // Cross-origin redirect (different port in dev) → token handoff via hash
+        if (session && isCrossOrigin(origin, resolvedNext)) {
+          const targetUrl = new URL(resolvedNext)
+          const callbackUrl = `${targetUrl.origin}/auth/callback?next=${encodeURIComponent(targetUrl.pathname + targetUrl.search)}#access_token=${session.access_token}&refresh_token=${session.refresh_token}&type=recovery`
+          return NextResponse.redirect(callbackUrl)
+        }
+
+        return NextResponse.redirect(resolvedNext)
       } else if (forwardedHost) {
         return NextResponse.redirect(`https://${forwardedHost}${next}`)
       } else {

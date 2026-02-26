@@ -36,7 +36,21 @@ export default function AuthForm({ mode }: AuthFormProps) {
         if (error) throw error
 
         if (redirectUrl) {
-          window.location.href = redirectUrl
+          // En dev, los ports son distintos, no se comparten cookies.
+          // Pasamos los tokens en el hash para que el destino llame setSession().
+          const isCrossOrigin = isCrossOriginUrl(redirectUrl)
+          if (isCrossOrigin) {
+            const { data: { session } } = await supabase.auth.getSession()
+            if (session) {
+              const targetUrl = new URL(redirectUrl)
+              const callbackUrl = `${targetUrl.origin}/auth/callback?next=${encodeURIComponent(targetUrl.pathname + targetUrl.search)}#access_token=${session.access_token}&refresh_token=${session.refresh_token}&type=recovery`
+              window.location.href = callbackUrl
+            } else {
+              window.location.href = redirectUrl
+            }
+          } else {
+            window.location.href = redirectUrl
+          }
         } else {
           router.push('/dashboard')
           router.refresh()
@@ -57,6 +71,16 @@ export default function AuthForm({ mode }: AuthFormProps) {
       setError(err.message || 'Ocurrió un error inesperado. Inténtalo de nuevo.')
     } finally {
       setLoading(false)
+    }
+  }
+
+  // Helpers
+  const isCrossOriginUrl = (url: string) => {
+    try {
+      const target = new URL(url)
+      return target.origin !== window.location.origin
+    } catch {
+      return false
     }
   }
 
