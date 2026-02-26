@@ -1,6 +1,7 @@
 // app/api/auth/callback/route.ts
 import { NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
+import { cookies } from 'next/headers'
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
@@ -17,53 +18,62 @@ export async function GET(request: Request) {
   }
 
   if (code) {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-
     const isProduction = process.env.NODE_ENV === 'production'
     const cookieConfig = isProduction
       ? { domain: '.resuelveya.cl', path: '/', sameSite: 'lax' as const, secure: true }
       : { path: '/', sameSite: 'lax' as const, secure: false }
 
-    // Determine the final redirect destination
-    const forwardedHost = request.headers.get('x-forwarded-host')
-    const isLocalEnv = process.env.NODE_ENV === 'development'
-    let redirectDest = `${origin}${next}`
-    if (!isLocalEnv && forwardedHost) {
-      redirectDest = `https://${forwardedHost}${next}`
-    }
+    // Use next/headers cookies() so Set-Cookie headers are attached to the response properly
+    const cookieStore = await cookies()
 
-    // Create the redirect response first — we'll attach cookies to it
-    const redirectResponse = NextResponse.redirect(redirectDest)
-
-    // Create a Supabase client that writes cookies directly into the redirect response
-    const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
-      cookies: {
-        getAll() {
-          return request.headers
-            .get('cookie')
-            ?.split('; ')
-            .map((cookie) => {
-              const [name, ...rest] = cookie.split('=')
-              return { name: name.trim(), value: rest.join('=') }
-            }) ?? []
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            redirectResponse.cookies.set(name, value, {
-              ...options,
-              ...cookieConfig,
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll() {
+            return cookieStore.getAll()
+          },
+          setAll(cookiesToSet) {
+            cookiesToSet.forEach(({ name, value, options }) => {
+              try {
+                cookieStore.set(name, value, { ...options, ...cookieConfig })
+              } catch { /* ignore errors in server components */ }
             })
-          })
+          },
         },
-      },
-      cookieOptions: cookieConfig,
-    })
+        cookieOptions: cookieConfig,
+      }
+    )
 
-    const { error } = await supabase.auth.exchangeCodeForSession(code)
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code)
 
     if (!error) {
-      return redirectResponse
+      // Determine final destination URL
+      const forwardedHost = request.headers.get('x-forwarded-host')
+      const isLocalEnv = process.env.NODE_ENV === 'development'
+
+      let redirectDest = `${origin}${next}`
+      if (!isLocalEnv && forwardedHost) {
+        redirectDest = `https://${forwardedHost}${next}`
+      }
+
+      // Return HTML page that immediately redirects via JS
+      // This ensures Set-Cookie headers on the 200 response are ALWAYS saved by the browser
+      // before the redirect happens (unlike a 302 where browsers sometimes ignore Set-Cookie)
+      const html = `<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>Iniciando sesión...</title></head>
+<body>
+<p>Iniciando sesión, espera un momento...</p>
+<script>window.location.replace(${JSON.stringify(redirectDest)});</script>
+</body>
+</html>`
+
+      return new Response(html, {
+        status: 200,
+        headers: { 'Content-Type': 'text/html; charset=utf-8' },
+      })
     } else {
       console.error('exchangeCodeForSession error:', error.message, error)
       return NextResponse.redirect(`${origin}/sign-in?error=${encodeURIComponent(error.message)}`)
