@@ -78,6 +78,10 @@ export async function middleware(request: NextRequest) {
 
   if (!user && isDashboard) {
     const loginUrl = new URL('/sign-in?reason=no_user', request.url)
+    const authStatus = url.searchParams.get('auth_exchange_status')
+    if (authStatus) {
+      loginUrl.searchParams.set('auth_exchange_status', authStatus)
+    }
     return NextResponse.redirect(loginUrl)
   }
 

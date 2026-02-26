@@ -19,21 +19,26 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = await createClient()
-    const { error } = await supabase.auth.exchangeCodeForSession(code)
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+
     if (!error) {
       const forwardedHost = request.headers.get('x-forwarded-host') // i.e. vercel.com
       const isLocalEnv = process.env.NODE_ENV === 'development'
-      if (isLocalEnv) {
-        // we can be sure that there is no proxy
-        return NextResponse.redirect(`${origin}${next}`)
-      } else if (forwardedHost) {
-        return NextResponse.redirect(`https://${forwardedHost}${next}`)
-      } else {
-        return NextResponse.redirect(`${origin}${next}`)
+
+      let redirectUrl = `${origin}${next}`
+      if (!isLocalEnv && forwardedHost) {
+        redirectUrl = `https://${forwardedHost}${next}`
       }
+
+      const finalUrl = new URL(redirectUrl)
+      // Indicate if Supabase returned a valid session object or null
+      finalUrl.searchParams.set('auth_exchange_status', data?.session ? 'session_present' : 'session_empty')
+
+      return NextResponse.redirect(finalUrl.toString())
     } else {
       // Log the error for debugging
       console.error('exchangeCodeForSession error:', error.message, error)
+      return NextResponse.redirect(`${origin}/sign-in?error=${encodeURIComponent(error.message)}`)
     }
   }
 
