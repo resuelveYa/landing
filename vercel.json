@@ -1,17 +1,4 @@
 {
-  "redirects": [
-    {
-      "source": "/:path*",
-      "has": [
-        {
-          "type": "host",
-          "value": "www.resuelveya.cl"
-        }
-      ],
-      "destination": "https://resuelveya.cl/:path*",
-      "permanent": true
-    }
-  ],
   "rewrites": [
     {
       "source": "/budget/(.*)",
