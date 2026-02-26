@@ -14,12 +14,12 @@ export default function AuthForm({ mode }: AuthFormProps) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
   const [showSuccess, setShowSuccess] = useState(false)
   const supabase = createClient()
   const router = useRouter()
   const searchParams = useSearchParams()
   const redirectUrl = searchParams.get('redirect_url')
+  const [error, setError] = useState<string | null>(searchParams.get('error') || null)
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault()
