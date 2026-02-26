@@ -83,6 +83,8 @@ export async function middleware(request: NextRequest) {
     loginUrl.searchParams.set('reason', 'no_user')
     loginUrl.searchParams.set('total_cookies', String(allCookies.length))
     loginUrl.searchParams.set('sb_cookies', String(sbCookies.length))
+    // Log the actual names of sb- cookies so we can see which one arrived
+    loginUrl.searchParams.set('sb_names', sbCookies.map(c => c.name).join(','))
     return NextResponse.redirect(loginUrl)
   }
 
