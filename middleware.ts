@@ -77,15 +77,7 @@ export async function middleware(request: NextRequest) {
   const redirectUrl = url.searchParams.get('redirect_url')
 
   if (!user && isDashboard) {
-    const allCookies = request.cookies.getAll()
-    const sbCookies = allCookies.filter(c => c.name.startsWith('sb-'))
-    const loginUrl = new URL('/sign-in', request.url)
-    loginUrl.searchParams.set('reason', 'no_user')
-    loginUrl.searchParams.set('total_cookies', String(allCookies.length))
-    loginUrl.searchParams.set('sb_cookies', String(sbCookies.length))
-    // Log the actual names of sb- cookies so we can see which one arrived
-    loginUrl.searchParams.set('sb_names', sbCookies.map(c => c.name).join(','))
-    return NextResponse.redirect(loginUrl)
+    return NextResponse.redirect(new URL('/sign-in', request.url))
   }
 
   // Handle cross-app redirects if user is signed in
