@@ -77,11 +77,12 @@ export async function middleware(request: NextRequest) {
   const redirectUrl = url.searchParams.get('redirect_url')
 
   if (!user && isDashboard) {
-    const loginUrl = new URL('/sign-in?reason=no_user', request.url)
-    const authStatus = url.searchParams.get('auth_exchange_status')
-    if (authStatus) {
-      loginUrl.searchParams.set('auth_exchange_status', authStatus)
-    }
+    const allCookies = request.cookies.getAll()
+    const sbCookies = allCookies.filter(c => c.name.startsWith('sb-'))
+    const loginUrl = new URL('/sign-in', request.url)
+    loginUrl.searchParams.set('reason', 'no_user')
+    loginUrl.searchParams.set('total_cookies', String(allCookies.length))
+    loginUrl.searchParams.set('sb_cookies', String(sbCookies.length))
     return NextResponse.redirect(loginUrl)
   }
 
