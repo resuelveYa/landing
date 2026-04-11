@@ -1,0 +1,153 @@
+name: Deploy Landing to Production
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy Landing Page
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build Next.js app
+        env:
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.CLERK_PUBLISHABLE_KEY }}
+          CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
+          NEXT_PUBLIC_API_URL: https://resuelveya.cl/api
+        run: npm run build
+      
+      - name: Create deployment package
+        run: |
+          mkdir -p deploy/.next
+          cp -r .next/standalone/* deploy/
+          cp -r .next/static deploy/.next/static
+          cp -r public deploy/public 2>/dev/null || true
+          cp ecosystem.config.cjs deploy/ 2>/dev/null || echo "module.exports = {apps: [{name: 'landing', script: 'server.js', env: {PORT: 3001}}]}" > deploy/ecosystem.config.cjs
+          tar -czf landing-deploy.tar.gz -C deploy .
+      
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.VPS_SSH_KEY }}
+      
+      - name: Add server to known hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
+      
+      - name: Deploy to VPS
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USERNAME: ${{ secrets.VPS_USERNAME }}
+        run: |
+          echo "🔑 Adding server to known_hosts..."
+          mkdir -p ~/.ssh
+          ssh-keyscan -H $VPS_HOST >> ~/.ssh/known_hosts
+          
+          echo "📤 Uploading package..."
+          scp -o StrictHostKeyChecking=no landing-deploy.tar.gz $VPS_USERNAME@$VPS_HOST:/tmp/
+          
+          echo "🚀 Executing remote deployment script..."
+          ssh -o StrictHostKeyChecking=no $VPS_USERNAME@$VPS_HOST << 'ENDSSH'
+            set -e
+            
+            echo "📂 Moving to deployment directory..."
+            cd /var/www/landing || { echo "❌ Directory not found"; exit 1; }
+            
+            # Backup
+            echo "💾 Creating backup..."
+            tar -czf ../landing-backup-$(date +%Y%m%d-%H%M%S).tar.gz . 2>/dev/null || true
+            
+            # Extract new version
+            echo "📦 Extracting new version..."
+            if [ -f /tmp/landing-deploy.tar.gz ]; then
+              tar -xzf /tmp/landing-deploy.tar.gz
+              rm /tmp/landing-deploy.tar.gz
+              echo "✅ Extraction complete."
+            else
+              echo "❌ Error: /tmp/landing-deploy.tar.gz not found!"
+              exit 1
+            fi
+            
+            # Update environment
+            echo "📝 Updating environment variables..."
+            cat > .env.production << 'ENVEOF'
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=${{ secrets.CLERK_PUBLISHABLE_KEY }}
+          CLERK_SECRET_KEY=${{ secrets.CLERK_SECRET_KEY }}
+          NEXT_PUBLIC_CLERK_DOMAIN=resuelveya.cl
+          NEXT_PUBLIC_API_URL=https://resuelveya.cl/api
+          NODE_ENV=production
+          PORT=3001
+          ENVEOF
+            
+            # Restart
+            echo "🔄 Restarting service with PM2..."
+            pm2 restart landing || pm2 start ecosystem.config.cjs
+            pm2 save
+            
+            echo "✅ Deployment completed successfully!"
+          ENDSSH
+      
+      - name: Health Check
+        run: |
+          echo "🏥 Checking landing page..."
+          sleep 10
+          
+          for i in {1..5}; do
+            if curl -f https://resuelveya.cl; then
+              echo "✅ Landing page is healthy!"
+              exit 0
+            fi
+            echo "⏳ Attempt $i failed, retrying..."
+            sleep 5
+          done
+          
+          echo "❌ Health check failed"
+          exit 1
+      
+      - name: Rollback on failure
+        if: failure()
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USERNAME: ${{ secrets.VPS_USERNAME }}
+        run: |
+          echo "🔙 Rolling back..."
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
+          ssh $VPS_USERNAME@$VPS_HOST << 'ENDSSH'
+            cd /var/www/landing
+            LATEST_BACKUP=$(ls -t ../landing-backup-*.tar.gz 2>/dev/null | head -1)
+            if [ -n "$LATEST_BACKUP" ]; then
+              echo "Restoring from $LATEST_BACKUP"
+              rm -rf *
+              tar -xzf "$LATEST_BACKUP"
+              pm2 restart landing
+              echo "✅ Rollback completed"
+            fi
+          ENDSSH
+      
+      - name: Cleanup old backups
+        if: success()
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USERNAME: ${{ secrets.VPS_USERNAME }}
+        run: |
+          ssh $VPS_USERNAME@$VPS_HOST << 'ENDSSH'
+            cd /var/www
+            ls -t landing-backup-*.tar.gz 2>/dev/null | tail -n +4 | xargs rm -f
+          ENDSSH
