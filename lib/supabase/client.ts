@@ -7,14 +7,14 @@ const isDevMode = typeof window !== 'undefined'
   : process.env.NEXT_PUBLIC_DEV_MODE === 'true' || process.env.NODE_ENV === 'development'
 
 // Cookie config varies between dev and production
-// detect if we are on a resuelveya.cl domain (including subdomains)
+// detect if we are on a licitex.cl domain (including subdomains)
 const isProduction = typeof window !== 'undefined'
-  ? window.location.hostname.endsWith('resuelveya.cl')
+  ? window.location.hostname.endsWith('licitex.cl')
   : process.env.NODE_ENV === 'production' && !process.env.NEXT_PUBLIC_DEV_MODE
 
 // Cookie config varies between dev and production
 const cookieConfig = isProduction
-  ? { domain: '.resuelveya.cl', path: '/', sameSite: 'lax' as const, secure: true }
+  ? { domain: '.licitex.cl', path: '/', sameSite: 'lax' as const, secure: true }
   : { path: '/', sameSite: 'lax' as const, secure: false }
 
 export function createClient() {

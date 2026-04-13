@@ -4,15 +4,15 @@ export const config = {
 
   // URLs de los microservicios
   adminUrl: process.env.NEXT_PUBLIC_CASHFLOW_URL ||
-    (process.env.NODE_ENV === 'development' ? 'http://localhost:5173' : 'https://cashflow.resuelveya.cl'),
+    (process.env.NODE_ENV === 'development' ? 'http://localhost:5173' : 'https://cashflow.licitex.cl'),
 
   chatUrl: process.env.NEXT_PUBLIC_BUDGET_URL ||
-    (process.env.NODE_ENV === 'development' ? 'http://localhost:3001' : 'https://budget.resuelveya.cl'),
+    (process.env.NODE_ENV === 'development' ? 'http://localhost:3001' : 'https://budget.licitex.cl'),
 
   baseUrl: process.env.NEXT_PUBLIC_BASE_URL ||
     (process.env.NODE_ENV === 'development'
       ? 'http://localhost:3000'
-      : 'https://resuelveya.cl'), // Landing
+      : 'https://licitex.cl'), // Landing
 };
 
 export const getProductUrls = () => {

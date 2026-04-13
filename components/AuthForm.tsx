@@ -116,7 +116,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
 
   const getRedirectUrl = () => {
     // Definimos explicitamente la URL base si estamos en producción
-    let origin = process.env.NEXT_PUBLIC_BASE_URL || 'https://resuelveya.cl';
+    let origin = process.env.NEXT_PUBLIC_BASE_URL || 'https://licitex.cl';
     if (typeof window !== 'undefined') {
       origin = window.location.origin;
     }

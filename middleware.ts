@@ -11,11 +11,11 @@ export async function middleware(request: NextRequest) {
 
   // Detect production based on hostname - more reliable than env vars
   const hostname = request.headers.get('host') || ''
-  const isProduction = hostname.endsWith('resuelveya.cl')
+  const isProduction = hostname.endsWith('licitex.cl')
 
   // Cookie config varies between dev and production
   const cookieConfig = isProduction
-    ? { domain: '.resuelveya.cl', path: '/', sameSite: 'lax' as const, secure: true }
+    ? { domain: '.licitex.cl', path: '/', sameSite: 'lax' as const, secure: true }
     : { path: '/', sameSite: 'lax' as const, secure: false }
 
   // Precise bypass for local development
@@ -96,11 +96,11 @@ export async function middleware(request: NextRequest) {
 
   // Handle cross-app redirects if user is signed in
   if (user && redirectUrl) {
-    const allowedDomains = ['resuelveya.cl', 'budget.resuelveya.cl', 'cashflow.resuelveya.cl', 'localhost']
+    const allowedDomains = ['licitex.cl', 'budget.licitex.cl', 'cashflow.licitex.cl', 'localhost']
     try {
       const redirectUrlObj = new URL(redirectUrl)
-      // Check if hostname ends with resuelveya.cl or is localhost
-      if (redirectUrlObj.hostname.endsWith('resuelveya.cl') || redirectUrlObj.hostname === 'localhost') {
+      // Check if hostname ends with licitex.cl or is localhost
+      if (redirectUrlObj.hostname.endsWith('licitex.cl') || redirectUrlObj.hostname === 'localhost') {
         const response = NextResponse.redirect(redirectUrl)
         // Ensure cookies are passed to the redirect response
         supabaseResponse.cookies.getAll().forEach(cookie => {

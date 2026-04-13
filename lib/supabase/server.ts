@@ -5,14 +5,14 @@ import { cookies } from 'next/headers'
 // Detect development mode
 const isDevMode = process.env.NEXT_PUBLIC_DEV_MODE === 'true' || process.env.NODE_ENV === 'development'
 
-// detect if we are on a resuelveya.cl domain (including subdomains)
+// detect if we are on a licitex.cl domain (including subdomains)
 // In development/localhost, we don't use the domain property
 // This is more reliable than environment variables for cookie visibility
 const isProduction = process.env.NODE_ENV === 'production' && !process.env.NEXT_PUBLIC_DEV_MODE
 
 // Cookie config varies between dev and production
 const cookieConfig = isProduction
-  ? { domain: '.resuelveya.cl', path: '/', sameSite: 'lax' as const, secure: true }
+  ? { domain: '.licitex.cl', path: '/', sameSite: 'lax' as const, secure: true }
   : { path: '/', sameSite: 'lax' as const, secure: false }
 
 export async function createClient() {

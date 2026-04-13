@@ -104,7 +104,7 @@ export function FAQSection() {
             Nuestro equipo está aquí para ayudarte
           </p>
           <a
-            href="mailto:soporte@resuelveya.cl"
+            href="mailto:soporte@licitex.cl"
             className="inline-flex items-center space-x-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl"
           >
             <span>Contactar Soporte</span>

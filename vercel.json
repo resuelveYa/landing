@@ -2,19 +2,19 @@
   "rewrites": [
     {
       "source": "/budget/(.*)",
-      "destination": "https://resuelveya-budget.vercel.app/budget/$1"
+      "destination": "https://budget.licitex.cl/$1"
     },
     {
       "source": "/budget",
-      "destination": "https://resuelveya-budget.vercel.app/budget"
+      "destination": "https://budget.licitex.cl"
     },
     {
       "source": "/cashflow/(.*)",
-      "destination": "https://resuelveya-cashflow.vercel.app/cashflow/$1"
+      "destination": "https://cashflow.licitex.cl/$1"
     },
     {
       "source": "/cashflow",
-      "destination": "https://resuelveya-cashflow.vercel.app/cashflow"
+      "destination": "https://cashflow.licitex.cl"
     }
   ]
 }

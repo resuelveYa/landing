@@ -22,7 +22,7 @@ export async function GET(request: Request) {
   if (code) {
     const isProduction = process.env.NODE_ENV === 'production'
     const cookieConfig = isProduction
-      ? { domain: '.resuelveya.cl', path: '/', sameSite: 'lax' as const, secure: true }
+      ? { domain: '.licitex.cl', path: '/', sameSite: 'lax' as const, secure: true }
       : { path: '/', sameSite: 'lax' as const, secure: false }
 
     const cookieStore = await cookies()

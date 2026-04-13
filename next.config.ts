@@ -25,12 +25,12 @@ const nextConfig = {
       },
       {
         source: '/budget/:path*',
-        destination: 'https://budget.resuelveya.cl/:path*',
+        destination: 'https://budget.licitex.cl/:path*',
         permanent: true,
       },
       {
         source: '/cashflow/:path*',
-        destination: 'https://cashflow.resuelveya.cl/:path*',
+        destination: 'https://cashflow.licitex.cl/:path*',
         permanent: true,
       },
     ];
