@@ -73,12 +73,14 @@ export async function middleware(request: NextRequest) {
           cookiesToClear.forEach(cookie => {
             supabaseResponse.cookies.set(cookie.name, '', { ...cookieConfig, maxAge: 0 })
           })
-          // Refresh token already used = race condition between tabs/requests; redirect silently
-          const isRefreshTokenError = error.message.toLowerCase().includes('refresh token')
-          const loginUrl = isRefreshTokenError
-            ? new URL('/sign-in', request.url)
-            : new URL(`/sign-in?reason=session_error&msg=${encodeURIComponent(error.message)}`, request.url)
-          return NextResponse.redirect(loginUrl)
+          // Only redirect to sign-in if this is a protected route.
+          // Public routes (/, /privacy, /terms, etc.) should render normally even with a bad session.
+          const url = new URL(request.url)
+          const isProtectedRoute = url.pathname.startsWith('/dashboard')
+          if (isProtectedRoute) {
+            return NextResponse.redirect(new URL('/sign-in', request.url))
+          }
+          // For public routes: cookies cleared above, continue without session
         }
       } else {
         user = data.user
@@ -132,11 +134,9 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Only run on routes that actually need session validation.
-    // Excludes all static assets, images, and non-auth API routes.
-    '/dashboard/:path*',
-    '/sign-in',
-    '/sign-up',
-    '/api/auth/:path*',
+    // Run on all routes except static assets.
+    // Auth check inside is guarded: only redirects on protected routes.
+    // Prefetch requests are skipped at the top of the function.
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }
