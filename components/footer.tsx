@@ -51,7 +51,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <a href="mailto:soporte@resuelveYA.cl" className="hover:text-blue-400 transition-colors">
+                <a href="mailto:soporte@licitex.cl" className="hover:text-blue-400 transition-colors">
                   Soporte
                 </a>
               </li>
@@ -62,7 +62,7 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="border-t border-gray-800 pt-8 flex flex-col sm:flex-row justify-between items-center">
           <p className="text-sm text-gray-400 mb-4 sm:mb-0">
-            © {new Date().getFullYear()} resuelveYA. Todos los derechos reservados.
+            © {new Date().getFullYear()} licitex. Todos los derechos reservados.
           </p>
           <p className="text-sm text-gray-400">
             Hecho con ❤️ en Chile 🇨🇱

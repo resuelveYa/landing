@@ -18,7 +18,7 @@ export default function SignUpPage() {
               Comienza gratis hoy
             </h1>
             <p className="text-gray-600">
-              Crea tu cuenta de resuelveYA y gestiona tu empresa mejor
+              Crea tu cuenta de licitex y gestiona tu empresa mejor
             </p>
           </div>
 

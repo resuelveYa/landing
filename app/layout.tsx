@@ -9,27 +9,27 @@ import AuthStateWatcher from '@/components/AuthStateWatcher';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'resuelveYA - Software de Gestión Empresarial Inteligente',
+  title: 'licitex - Software de Gestión Empresarial Inteligente',
   description: 'Gestiona tu empresa con flujo de caja automático y asistente IA. Hecho en Chile para emprendedores chilenos.',
-  keywords: ['flujo de caja', 'gestión empresarial', 'software chile', 'IA empresarial', 'resuelveYA'],
-  authors: [{ name: 'resuelveYA' }],
-  creator: 'resuelveYA',
-  publisher: 'resuelveYA',
-  metadataBase: new URL('https://resuelveYA.cl'),
+  keywords: ['flujo de caja', 'gestión empresarial', 'software chile', 'IA empresarial', 'licitex'],
+  authors: [{ name: 'licitex' }],
+  creator: 'licitex',
+  publisher: 'licitex',
+  metadataBase: new URL('https://licitex.cl'),
   other: {
     'facebook-domain-verification': process.env.NEXT_PUBLIC_META_DOMAIN_VERIFICATION || '',
   },
   openGraph: {
-    title: 'resuelveYA - Software de Gestión Empresarial',
+    title: 'licitex - Software de Gestión Empresarial',
     description: 'Gestiona tu empresa con flujo de caja automático y asistente IA',
-    url: 'https://resuelveYA.cl',
-    siteName: 'resuelveYA',
+    url: 'https://licitex.cl',
+    siteName: 'licitex',
     images: [
       {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'resuelveYA - Software de Gestión Empresarial',
+        alt: 'licitex - Software de Gestión Empresarial',
       },
     ],
     locale: 'es_CL',
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'resuelveYA - Software de Gestión Empresarial',
+    title: 'licitex - Software de Gestión Empresarial',
     description: 'Gestiona tu empresa con flujo de caja automático y asistente IA',
     images: ['/og-image.png'],
   },

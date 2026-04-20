@@ -241,8 +241,8 @@ export default async function DashboardPage() {
           <p className="text-white/90 mb-4 text-lg">
             Como beta tester, tu feedback es invaluable. Contáctanos si tienes preguntas o sugerencias.
           </p>
-          <Link href="mailto:soporte@resuelveYA.cl" className="inline-flex items-center gap-2 bg-white text-blue-600 px-6 py-3 rounded-xl font-bold hover:bg-gray-100 transition-all">
-            soporte@resuelveYA.cl
+          <Link href="mailto:soporte@licitex.cl" className="inline-flex items-center gap-2 bg-white text-blue-600 px-6 py-3 rounded-xl font-bold hover:bg-gray-100 transition-all">
+            soporte@licitex.cl
             <ArrowRight size={18} />
           </Link>
         </div>

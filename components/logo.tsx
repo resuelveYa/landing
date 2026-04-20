@@ -28,7 +28,7 @@ export default function Logo({
     <div className={`relative ${className}`} style={{ width, height }}>
       <Image
         src="/logo.png"
-        alt="resuelveYA"
+        alt="licitex"
         fill
         priority
         className="object-contain object-left"

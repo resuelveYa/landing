@@ -18,7 +18,7 @@ export default function SignInPage() {
               Bienvenido de vuelta
             </h1>
             <p className="text-gray-600">
-              Inicia sesión para continuar con resuelveYA
+              Inicia sesión para continuar con licitex
             </p>
           </div>
 
