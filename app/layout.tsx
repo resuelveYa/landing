@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import GoogleAnalytics from '@/components/GoogleAnalytics';
 import { MetaPixel } from '@/components/MetaPixel';
+import AuthStateWatcher from '@/components/AuthStateWatcher';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -74,6 +75,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <GoogleAnalytics />
         <MetaPixel />
+        <AuthStateWatcher />
         {children}
       </body>
     </html>

@@ -2,6 +2,16 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
+  // Skip auth check for Next.js prefetch requests — these fire for every link in viewport
+  // and would hammer the Supabase /token endpoint hundreds of times per minute.
+  if (
+    request.headers.get('next-router-prefetch') ||
+    request.headers.get('purpose') === 'prefetch' ||
+    request.headers.get('x-middleware-prefetch')
+  ) {
+    return NextResponse.next({ request })
+  }
+
   let supabaseResponse = NextResponse.next({
     request,
   })
@@ -18,14 +28,13 @@ export async function middleware(request: NextRequest) {
     ? { domain: '.licitex.cl', path: '/', sameSite: 'lax' as const, secure: true }
     : { path: '/', sameSite: 'lax' as const, secure: false }
 
-  // Precise bypass for local development
-  const host = request.headers.get('host') || ''
-  const isLocalBypass = 
-    process.env.NEXT_PUBLIC_DEV_MODE === 'true' || 
-    host.includes('localhost') || 
-    host.includes('127.0.0.1') ||
-    !supabaseUrl || 
-    !supabaseAnonKey || 
+  // Bypass only when credentials are missing or dev mode is explicitly forced.
+  // Do NOT bypass based on hostname — real credentials should always use real Supabase,
+  // even locally, so that OAuth and session validation work correctly.
+  const isLocalBypass =
+    process.env.NEXT_PUBLIC_DEV_MODE === 'true' ||
+    !supabaseUrl ||
+    !supabaseAnonKey ||
     supabaseUrl === 'undefined';
 
   let user = null
@@ -60,12 +69,15 @@ export async function middleware(request: NextRequest) {
       if (error) {
         if (error.message !== 'Auth session missing!') {
           console.error('Auth error in middleware:', error.message)
-          // Clear cookies
           const cookiesToClear = request.cookies.getAll().filter(c => c.name.startsWith('sb-'))
           cookiesToClear.forEach(cookie => {
             supabaseResponse.cookies.set(cookie.name, '', { ...cookieConfig, maxAge: 0 })
           })
-          const loginUrl = new URL(`/sign-in?reason=session_error&msg=${encodeURIComponent(error.message)}`, request.url)
+          // Refresh token already used = race condition between tabs/requests; redirect silently
+          const isRefreshTokenError = error.message.toLowerCase().includes('refresh token')
+          const loginUrl = isRefreshTokenError
+            ? new URL('/sign-in', request.url)
+            : new URL(`/sign-in?reason=session_error&msg=${encodeURIComponent(error.message)}`, request.url)
           return NextResponse.redirect(loginUrl)
         }
       } else {
@@ -120,13 +132,11 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * Feel free to modify this pattern to include more paths.
-     */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    // Only run on routes that actually need session validation.
+    // Excludes all static assets, images, and non-auth API routes.
+    '/dashboard/:path*',
+    '/sign-in',
+    '/sign-up',
+    '/api/auth/:path*',
   ],
 }

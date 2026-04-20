@@ -54,8 +54,13 @@ export async function GET(request: Request) {
 
       const forwardedHost = request.headers.get('x-forwarded-host')
       const isLocalEnv = process.env.NODE_ENV === 'development'
+
+      // `next` can be a full URL (e.g. https://cashflow.licitex.cl/...) when the user
+      // came from a cross-app redirect. Handle both cases: full URL and relative path.
+      const isNextFullUrl = next.startsWith('http://') || next.startsWith('https://')
+
       if (isLocalEnv) {
-        const resolvedNext = `${origin}${next}`
+        const resolvedNext = isNextFullUrl ? next : `${origin}${next}`
 
         // Cross-origin redirect (different port in dev) → token handoff via hash
         if (session && isCrossOrigin(origin, resolvedNext)) {
@@ -65,6 +70,16 @@ export async function GET(request: Request) {
         }
 
         return NextResponse.redirect(resolvedNext)
+      } else if (isNextFullUrl) {
+        // Production cross-app redirect (e.g. cashflow.licitex.cl).
+        // Cookies are shared via .licitex.cl domain — just redirect directly.
+        try {
+          const nextUrl = new URL(next)
+          if (nextUrl.hostname.endsWith('licitex.cl')) {
+            return NextResponse.redirect(next)
+          }
+        } catch {}
+        return NextResponse.redirect(`${origin}/dashboard`)
       } else if (forwardedHost) {
         return NextResponse.redirect(`https://${forwardedHost}${next}`)
       } else {

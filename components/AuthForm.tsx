@@ -3,6 +3,7 @@
 
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { createBrowserClient } from '@supabase/ssr'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Mail, Lock, Loader2, Github, CheckCircle2, AlertCircle, ArrowRight } from 'lucide-react'
 
@@ -21,6 +22,11 @@ export default function AuthForm({ mode }: AuthFormProps) {
   const redirectUrl = searchParams.get('redirect_url')
   const [error, setError] = useState<string | null>(searchParams.get('error') || null)
 
+  const isLocalBypass =
+    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    process.env.NEXT_PUBLIC_SUPABASE_URL === 'undefined' ||
+    process.env.NEXT_PUBLIC_DEV_MODE === 'true'
+
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
@@ -28,20 +34,10 @@ export default function AuthForm({ mode }: AuthFormProps) {
 
     try {
       const trimmedEmail = email.trim()
-      const isLocalBypass = 
-        !process.env.NEXT_PUBLIC_SUPABASE_URL || 
-        process.env.NEXT_PUBLIC_SUPABASE_URL === 'undefined' ||
-        (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) ||
-        process.env.NEXT_PUBLIC_DEV_MODE === 'true';
 
       if (isLocalBypass && mode === 'sign-in') {
         if (trimmedEmail === 'admin@saer.cl') {
-           console.log('🚀 Local Auth Bypass triggered for admin@saer.cl');
-           
-           // Establecer cookie local para persistencia en Server Components (7 días)
            document.cookie = "sb-local-token=local-admin-bypass-token; path=/; max-age=604800; SameSite=Lax";
-           
-           // Asegurar que el destino tenga el token bypass
            if (redirectUrl) {
               const targetUrl = new URL(redirectUrl)
               const callbackUrl = `${targetUrl.origin}/auth/callback?next=${encodeURIComponent(targetUrl.pathname + targetUrl.search)}#access_token=local-admin-bypass-token&refresh_token=local-admin-bypass-refresh-token&type=recovery`
@@ -51,6 +47,10 @@ export default function AuthForm({ mode }: AuthFormProps) {
              router.refresh()
            }
            return;
+        } else {
+          // En modo desarrollo, solo admin@saer.cl funciona con el bypass local.
+          // Para testear con credenciales reales, comenta NEXT_PUBLIC_DEV_MODE en .env.local
+          throw new Error('Modo desarrollo: usa admin@saer.cl para ingresar.')
         }
       }
 
@@ -115,46 +115,61 @@ export default function AuthForm({ mode }: AuthFormProps) {
   }
 
   const getRedirectUrl = () => {
-    // Definimos explicitamente la URL base si estamos en producción
-    let origin = process.env.NEXT_PUBLIC_BASE_URL || 'https://licitex.cl';
-    if (typeof window !== 'undefined') {
-      origin = window.location.origin;
-    }
-    // Aseguramos que termine sin barra
+    let origin = typeof window !== 'undefined' ? window.location.origin : (process.env.NEXT_PUBLIC_BASE_URL || 'https://licitex.cl');
     origin = origin.replace(/\/$/, '');
-    return `${origin}/api/auth/callback`;
+    // Encode the cross-app redirect_url into the `next` param so the callback route
+    // can forward the user back to cashflow/budget-analyzer after OAuth completes.
+    const next = redirectUrl ? `?next=${encodeURIComponent(redirectUrl)}` : '';
+    return `${origin}/api/auth/callback${next}`;
   };
 
+  // OAuth always uses the real Supabase client — mock bypass is only for email/password.
+  // This allows Google/GitHub login to work locally as long as localhost:3000/api/auth/callback
+  // is added as an allowed redirect URI in the Supabase project settings.
+  const getOAuthClient = () => {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    if (!url || url === 'undefined' || !key) return null
+    return createBrowserClient(url, key)
+  }
+
   const handleGithubLogin = async () => {
+    const oauthClient = getOAuthClient()
+    if (!oauthClient) {
+      setError('OAuth no disponible: configura NEXT_PUBLIC_SUPABASE_URL en .env.local')
+      return
+    }
     setLoading(true)
     try {
-      await supabase.auth.signInWithOAuth({
+      await oauthClient.auth.signInWithOAuth({
         provider: 'github',
-        options: {
-          redirectTo: getRedirectUrl(),
-        },
+        options: { redirectTo: getRedirectUrl() },
       })
     } catch (err) {
       setError('Error al conectar con GitHub')
+    } finally {
       setLoading(false)
     }
   }
 
   const handleGoogleLogin = async () => {
+    const oauthClient = getOAuthClient()
+    if (!oauthClient) {
+      setError('OAuth no disponible: configura NEXT_PUBLIC_SUPABASE_URL en .env.local')
+      return
+    }
     setLoading(true)
     try {
-      await supabase.auth.signInWithOAuth({
+      await oauthClient.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          queryParams: {
-            access_type: 'offline',
-            prompt: 'consent',
-          },
+          queryParams: { access_type: 'offline', prompt: 'consent' },
           redirectTo: getRedirectUrl(),
         },
       })
     } catch (err) {
       setError('Error al conectar con Google')
+    } finally {
       setLoading(false)
     }
   }

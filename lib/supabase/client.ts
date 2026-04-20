@@ -1,16 +1,9 @@
 // lib/supabase/client.ts
 import { createBrowserClient } from '@supabase/ssr'
 
-// Detect development mode
-const isDevMode = typeof window !== 'undefined'
-  ? window.location.hostname === 'localhost'
-  : process.env.NEXT_PUBLIC_DEV_MODE === 'true' || process.env.NODE_ENV === 'development'
-
-// Cookie config varies between dev and production
-// detect if we are on a licitex.cl domain (including subdomains)
 const isProduction = typeof window !== 'undefined'
   ? window.location.hostname.endsWith('licitex.cl')
-  : process.env.NODE_ENV === 'production' && !process.env.NEXT_PUBLIC_DEV_MODE
+  : process.env.NODE_ENV === 'production' && process.env.NEXT_PUBLIC_DEV_MODE !== 'true'
 
 // Cookie config varies between dev and production
 const cookieConfig = isProduction
@@ -21,7 +14,7 @@ export function createClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-  const isBypass = !url || !anonKey || url === 'undefined' || isDevMode;
+  const isBypass = !url || !anonKey || url === 'undefined' || process.env.NEXT_PUBLIC_DEV_MODE === 'true';
 
   if (isBypass) {
     // Helper to get cookie

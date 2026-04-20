@@ -2,13 +2,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
-// Detect development mode
-const isDevMode = process.env.NEXT_PUBLIC_DEV_MODE === 'true' || process.env.NODE_ENV === 'development'
-
-// detect if we are on a licitex.cl domain (including subdomains)
-// In development/localhost, we don't use the domain property
-// This is more reliable than environment variables for cookie visibility
-const isProduction = process.env.NODE_ENV === 'production' && !process.env.NEXT_PUBLIC_DEV_MODE
+const isProduction = process.env.NODE_ENV === 'production' && process.env.NEXT_PUBLIC_DEV_MODE !== 'true'
 
 // Cookie config varies between dev and production
 const cookieConfig = isProduction
@@ -19,7 +13,7 @@ export async function createClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-  const isBypass = !url || !anonKey || url === 'undefined' || isDevMode
+  const isBypass = !url || !anonKey || url === 'undefined' || process.env.NEXT_PUBLIC_DEV_MODE === 'true'
 
   if (isBypass) {
     const cookieStore = await cookies()
