@@ -40,16 +40,16 @@ export default function AuthForm({ mode }: AuthFormProps) {
 
       if (isLocalBypass && mode === 'sign-in') {
         if (trimmedEmail === 'admin@saer.cl') {
-           document.cookie = "sb-local-token=local-admin-bypass-token; path=/; max-age=604800; SameSite=Lax";
-           if (redirectUrl) {
-              const targetUrl = new URL(redirectUrl)
-              const callbackUrl = `${targetUrl.origin}/auth/callback?next=${encodeURIComponent(targetUrl.pathname + targetUrl.search)}#access_token=local-admin-bypass-token&refresh_token=local-admin-bypass-refresh-token&type=recovery`
-              window.location.href = callbackUrl
-           } else {
-             router.push('/dashboard')
-             router.refresh()
-           }
-           return;
+          document.cookie = "sb-local-token=local-admin-bypass-token; path=/; max-age=604800; SameSite=Lax";
+          if (redirectUrl) {
+            const targetUrl = new URL(redirectUrl)
+            const callbackUrl = `${targetUrl.origin}/auth/callback?next=${encodeURIComponent(targetUrl.pathname + targetUrl.search)}#access_token=local-admin-bypass-token&refresh_token=local-admin-bypass-refresh-token&type=recovery`
+            window.location.href = callbackUrl
+          } else {
+            router.push('/dashboard')
+            router.refresh()
+          }
+          return;
         } else {
           // En modo desarrollo, solo admin@saer.cl funciona con el bypass local.
           // Para testear con credenciales reales, comenta NEXT_PUBLIC_DEV_MODE en .env.local
@@ -274,16 +274,16 @@ export default function AuthForm({ mode }: AuthFormProps) {
             <div className="w-full border-t border-gray-100"></div>
           </div>
           <div className="relative flex justify-center text-xs uppercase tracking-widest font-semibold">
-            <span className="px-4 bg-white text-gray-400 italic">O usa tu red profesional</span>
+            <span className="px-4 bg-white text-gray-400 italic">O usa tu red social</span>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
+        <div className="flex justify-center mt-6">
           <button
             onClick={handleGoogleLogin}
             disabled={loading}
             type="button"
-            className="w-full flex items-center justify-center gap-3 px-4 py-4 rounded-xl border border-gray-200 hover:bg-gray-50 hover:border-gray-300 transition-all font-bold text-gray-700 active:scale-[0.98]"
+            className="w-full max-w-xs flex items-center justify-center gap-3 px-4 py-4 rounded-xl border border-gray-200 hover:bg-gray-50 hover:border-gray-300 transition-all font-bold text-gray-700 active:scale-[0.98]"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path
@@ -304,16 +304,6 @@ export default function AuthForm({ mode }: AuthFormProps) {
               />
             </svg>
             Google
-          </button>
-
-          <button
-            onClick={handleGithubLogin}
-            disabled={loading}
-            type="button"
-            className="w-full flex items-center justify-center gap-3 px-4 py-4 rounded-xl border border-gray-200 hover:bg-gray-50 hover:border-gray-300 transition-all font-bold text-gray-700 active:scale-[0.98]"
-          >
-            <Github className="w-5 h-5 text-gray-900" />
-            GitHub
           </button>
         </div>
       </div>
