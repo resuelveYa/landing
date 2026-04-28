@@ -181,7 +181,7 @@ export default function HeroSection() {
             { value: '+850', label: 'licitaciones analizadas' },
             { value: '$12.000M', label: 'en presupuestos revisados' },
             { value: '94%', label: 'de precisión detectando errores' },
-            { value: '< 2 min', label: 'por análisis completo' },
+            { value: '< 10 min', label: 'por análisis completo' },
           ].map((stat, i) => (
             <div key={i} className="text-center">
               <p className="text-2xl sm:text-3xl font-black text-white">{stat.value}</p>

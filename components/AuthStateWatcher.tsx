@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
+import { createClient, emergencyClearCookies } from '@/lib/supabase/client'
 import type { AuthChangeEvent } from '@supabase/supabase-js'
 
 /**
@@ -22,6 +22,7 @@ export default function AuthStateWatcher() {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event: AuthChangeEvent) => {
       if (event === 'SIGNED_OUT') {
+        emergencyClearCookies()
         router.push('/sign-in')
         router.refresh()
       }

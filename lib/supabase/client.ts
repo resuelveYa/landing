@@ -1,14 +1,29 @@
 // lib/supabase/client.ts
 import { createBrowserClient } from '@supabase/ssr'
 
-const isProduction = typeof window !== 'undefined'
+export const isProduction = typeof window !== 'undefined'
   ? window.location.hostname.endsWith('licitex.cl')
   : process.env.NODE_ENV === 'production' && process.env.NEXT_PUBLIC_DEV_MODE !== 'true'
 
 // Cookie config varies between dev and production
-const cookieConfig = isProduction
+export const cookieConfig = isProduction
   ? { domain: '.licitex.cl', path: '/', sameSite: 'lax' as const, secure: true }
   : { path: '/', sameSite: 'lax' as const, secure: false }
+
+export function emergencyClearCookies() {
+  if (typeof document === 'undefined') return;
+  const cookies = document.cookie.split(';');
+  for (let i = 0; i < cookies.length; i++) {
+    const cookie = cookies[i];
+    const eqPos = cookie.indexOf('=');
+    const name = eqPos > -1 ? cookie.substring(0, eqPos).trim() : cookie.trim();
+    if (name.startsWith('sb-')) {
+      document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';
+      document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=.licitex.cl';
+      document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=licitex.cl';
+    }
+  }
+}
 
 export function createClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL

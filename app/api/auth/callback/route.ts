@@ -20,11 +20,7 @@ export async function GET(request: Request) {
   }
 
   if (code) {
-    const isProduction = process.env.NODE_ENV === 'production'
-    const cookieConfig = isProduction
-      ? { domain: '.licitex.cl', path: '/', sameSite: 'lax' as const, secure: true }
-      : { path: '/', sameSite: 'lax' as const, secure: false }
-
+    const { cookieConfig } = await import('@/lib/supabase/client')
     const cookieStore = await cookies()
 
     const supabase = createServerClient(

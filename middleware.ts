@@ -72,6 +72,7 @@ export async function middleware(request: NextRequest) {
           const cookiesToClear = request.cookies.getAll().filter(c => c.name.startsWith('sb-'))
           cookiesToClear.forEach(cookie => {
             supabaseResponse.cookies.set(cookie.name, '', { ...cookieConfig, maxAge: 0 })
+            supabaseResponse.cookies.set(cookie.name, '', { path: '/', maxAge: 0 })
           })
           // Only redirect to sign-in if this is a protected route.
           // Public routes (/, /privacy, /terms, etc.) should render normally even with a bad session.

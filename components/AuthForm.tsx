@@ -2,7 +2,7 @@
 'use client'
 
 import { useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
+import { createClient, cookieConfig, emergencyClearCookies } from '@/lib/supabase/client'
 import { createBrowserClient } from '@supabase/ssr'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Mail, Lock, Loader2, Github, CheckCircle2, AlertCircle, ArrowRight } from 'lucide-react'
@@ -31,6 +31,9 @@ export default function AuthForm({ mode }: AuthFormProps) {
     e.preventDefault()
     setLoading(true)
     setError(null)
+
+    // Si el usuario intentaba loguearse y tenía un loop previo, limpiamos por seguridad
+    emergencyClearCookies()
 
     try {
       const trimmedEmail = email.trim()
@@ -130,7 +133,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL
     const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
     if (!url || url === 'undefined' || !key) return null
-    return createBrowserClient(url, key)
+    return createBrowserClient(url, key, { cookieOptions: cookieConfig })
   }
 
   const handleGithubLogin = async () => {
