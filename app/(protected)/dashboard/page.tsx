@@ -32,10 +32,10 @@ export default async function DashboardPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-3">
-              <Logo size="md" showText />
+              <Logo size="md" />
               {betaAccess && (
                 <span className="text-xs bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1 rounded-full font-bold animate-pulse">
-                  Beta Tester
+                  Versión Beta
                 </span>
               )}
             </div>
