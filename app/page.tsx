@@ -8,12 +8,11 @@ import { PricingSection } from '@/components/sections/PricingSection';
 import { HowItWorksSection } from '@/components/sections/HowItWorksSection';
 import { FAQSection } from '@/components/sections/FAQSection';
 import { CTASection } from '@/components/sections/CTASection';
-import BetaForm from '@/components/beta-form';
 import Footer from '@/components/footer';
 
 export default function Home() {
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen bg-[#0A1628]">
       <Navigation />
       <HeroSection />
       <ProductsSection />
@@ -22,7 +21,6 @@ export default function Home() {
       <PricingSection />
       <FAQSection />
       <CTASection />
-      <BetaForm />
       <Footer />
     </main>
   );

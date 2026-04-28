@@ -1,124 +1,123 @@
 'use client';
 
-import { 
-  Zap, 
-  Shield, 
-  TrendingUp, 
-  Clock, 
-  Users, 
-  BarChart3,
-  CheckCircle,
-  Sparkles
-} from 'lucide-react';
+import { FileSearch, ShieldAlert, GitCompare, Brain, Clock, BarChart3, FileCheck, Layers } from 'lucide-react';
 
 export function FeaturesSection() {
   const features = [
     {
-      icon: Sparkles,
-      title: 'Análisis con IA',
-      description: 'Tecnología de inteligencia artificial que analiza tus presupuestos y detecta oportunidades de ahorro.',
-      gradient: 'from-blue-500 to-purple-600',
+      icon: FileSearch,
+      title: 'Detección de partidas faltantes',
+      description: 'La IA compara tu presupuesto contra bases de licitación y detecta ítems que olvidaste incluir, evitando descalificaciones o pérdidas.',
+      tag: 'Más usado',
+      tagColor: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
     },
     {
-      icon: TrendingUp,
-      title: 'Visualización en Tiempo Real',
-      description: 'Gráficos interactivos que muestran tu flujo de caja actualizado al instante.',
-      gradient: 'from-green-500 to-emerald-600',
+      icon: ShieldAlert,
+      title: 'Validación de precios',
+      description: 'Contrasta tus precios unitarios con referencias del mercado chileno. Detecta si estás cotizando por debajo del costo real o fuera de rango.',
+      tag: 'Crítico',
+      tagColor: 'bg-red-500/20 text-red-400 border-red-500/30',
+    },
+    {
+      icon: GitCompare,
+      title: 'Comparación de versiones',
+      description: 'Sube múltiples versiones del presupuesto y compara diferencias automáticamente. Ideal cuando la municipalidad publica aclaraciones.',
+      tag: null,
+      tagColor: '',
+    },
+    {
+      icon: Brain,
+      title: 'Análisis de bases de licitación',
+      description: 'Sube las bases técnicas y administrativas de Mercado Público. La IA extrae los requisitos presupuestarios clave en segundos.',
+      tag: 'IA',
+      tagColor: 'bg-purple-500/20 text-purple-400 border-purple-500/30',
     },
     {
       icon: Clock,
-      title: 'Ahorra Tiempo',
-      description: 'Análisis de presupuestos en minutos en lugar de horas. Automatiza tareas repetitivas.',
-      gradient: 'from-orange-500 to-red-600',
-    },
-    {
-      icon: Shield,
-      title: 'Datos Seguros',
-      description: 'Encriptación de nivel bancario. Tus datos están protegidos con los más altos estándares de seguridad.',
-      gradient: 'from-indigo-500 to-blue-600',
-    },
-    {
-      icon: Users,
-      title: 'Multi-Organización',
-      description: 'Gestiona múltiples negocios o proyectos desde una sola cuenta.',
-      gradient: 'from-pink-500 to-rose-600',
+      title: 'Historial de licitaciones',
+      description: 'Guarda y reutiliza presupuestos anteriores. Aprende qué funcionó en licitaciones ganadas y aplícalo a las nuevas.',
+      tag: null,
+      tagColor: '',
     },
     {
       icon: BarChart3,
-      title: 'Reportes Profesionales',
-      description: 'Genera reportes detallados en PDF listos para compartir con tu equipo o clientes.',
-      gradient: 'from-cyan-500 to-blue-600',
+      title: 'Análisis de rentabilidad',
+      description: 'Calcula el margen real de tu oferta considerando costos directos, indirectos, imprevistos y utilidad. Ve si conviene postular.',
+      tag: null,
+      tagColor: '',
+    },
+    {
+      icon: FileCheck,
+      title: 'Reporte de cumplimiento',
+      description: 'Genera un informe de cumplimiento del presupuesto vs. las exigencias de las bases. Listo para adjuntar a tu oferta técnica.',
+      tag: 'Nuevo',
+      tagColor: 'bg-green-500/20 text-green-400 border-green-500/30',
+    },
+    {
+      icon: Layers,
+      title: 'Gestión de flujo de caja',
+      description: 'Una vez adjudicado, controla el flujo de caja del proyecto. Registra avances, estados de pago y proyecta la liquidez mensual.',
+      tag: null,
+      tagColor: '',
     },
   ];
 
   return (
-    <section id="caracteristicas" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-gray-50 to-white">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
+    <section id="caracteristicas" className="py-24 bg-slate-900">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <div className="inline-flex items-center space-x-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm font-medium mb-4">
-            <CheckCircle className="w-4 h-4" />
-            <span>Todo lo que necesitas</span>
-          </div>
-          <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-            Características que{' '}
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              impulsan tu negocio
+          <p className="text-blue-400 font-semibold text-sm uppercase tracking-widest mb-3">Funcionalidades</p>
+          <h2 className="text-4xl lg:text-5xl font-black text-white mb-4">
+            Todo lo que necesitas para{' '}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">
+              ganar la licitación
             </span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Herramientas profesionales diseñadas para simplificar la gestión financiera de tu empresa
+          <p className="text-slate-400 text-lg max-w-2xl mx-auto">
+            Herramientas diseñadas específicamente para empresas que postulan a licitaciones públicas en Chile
           </p>
         </div>
 
-        {/* Features Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
           {features.map((feature, idx) => {
             const Icon = feature.icon;
             return (
               <div
                 key={idx}
-                className="group relative bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-gray-300 transition-all hover:shadow-xl"
+                className="group bg-slate-800/50 border border-slate-700/50 hover:border-blue-500/40 rounded-2xl p-6 transition-all hover:bg-slate-800 hover:shadow-xl hover:shadow-blue-900/20"
               >
-                {/* Gradient Background on Hover */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-5 rounded-2xl transition-opacity`} />
-
-                {/* Icon */}
-                <div className={`inline-flex w-14 h-14 bg-gradient-to-br ${feature.gradient} rounded-xl items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform`}>
-                  <Icon className="w-7 h-7 text-white" />
+                <div className="flex items-start justify-between mb-4">
+                  <div className="w-11 h-11 bg-blue-600/15 rounded-xl flex items-center justify-center group-hover:bg-blue-600/25 transition-colors">
+                    <Icon className="w-5 h-5 text-blue-400" />
+                  </div>
+                  {feature.tag && (
+                    <span className={`text-xs font-semibold px-2 py-1 rounded-full border ${feature.tagColor}`}>
+                      {feature.tag}
+                    </span>
+                  )}
                 </div>
-
-                {/* Content */}
-                <h3 className="text-xl font-bold text-gray-900 mb-3">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  {feature.description}
-                </p>
+                <h3 className="text-white font-bold mb-2 text-base leading-snug">{feature.title}</h3>
+                <p className="text-slate-400 text-sm leading-relaxed">{feature.description}</p>
               </div>
             );
           })}
         </div>
 
-        {/* Bottom Stats */}
-        <div className="mt-20 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl p-12 text-white">
-          <div className="grid md:grid-cols-4 gap-8 text-center">
-            <div>
-              <div className="text-4xl font-bold mb-2">98%</div>
-              <div className="text-blue-100">Precisión en análisis</div>
-            </div>
-            <div>
-              <div className="text-4xl font-bold mb-2">&lt; 2min</div>
-              <div className="text-blue-100">Tiempo de análisis</div>
-            </div>
-            <div>
-              <div className="text-4xl font-bold mb-2">100%</div>
-              <div className="text-blue-100">Gratis para empezar</div>
-            </div>
-            <div>
-              <div className="text-4xl font-bold mb-2">24/7</div>
-              <div className="text-blue-100">Disponibilidad</div>
-            </div>
+        {/* Mercado Público callout */}
+        <div className="mt-12 bg-gradient-to-r from-blue-900/40 to-slate-800/40 border border-blue-800/40 rounded-2xl p-8 flex flex-col md:flex-row items-center gap-6">
+          <div className="w-14 h-14 bg-blue-600/20 rounded-xl flex items-center justify-center flex-shrink-0">
+            <span className="text-2xl">🏛️</span>
+          </div>
+          <div className="flex-1 text-center md:text-left">
+            <h3 className="text-white font-bold text-lg mb-1">Diseñado para Mercado Público</h3>
+            <p className="text-slate-400 text-sm max-w-2xl">
+              licitex entiende el formato y los requisitos de las licitaciones publicadas en{' '}
+              <span className="text-blue-400 font-semibold">mercadopublico.cl</span>. Sube directamente
+              las bases de licitación en PDF o Excel y la IA extrae automáticamente las especificaciones técnicas y presupuestarias.
+            </p>
+          </div>
+          <div className="text-slate-300 text-sm font-semibold whitespace-nowrap bg-slate-700/50 px-4 py-2 rounded-lg border border-slate-600/50">
+            Licitaciones L1, LE y LP
           </div>
         </div>
       </div>

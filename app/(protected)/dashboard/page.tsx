@@ -5,6 +5,7 @@ import { Sparkles, Bot, ExternalLink, Zap, BarChart3, FileText, ArrowRight, Tren
 import Link from 'next/link';
 import { getProductUrls } from '@/lib/config';
 import Logo from '@/components/logo';
+import CrossAppLink from '@/components/CrossAppLink';
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -132,13 +133,13 @@ export default async function DashboardPage() {
             <p className="text-cyan-100 mb-4">
               Sube documentos y obtén insights
             </p>
-            <Link
+            <CrossAppLink
               href={urls.chat}
               className="inline-flex items-center gap-2 bg-white text-blue-600 px-6 py-3 rounded-xl font-bold hover:bg-gray-100 transition-all shadow-lg"
             >
               Abrir Asistente
               <ArrowRight size={18} />
-            </Link>
+            </CrossAppLink>
           </div>
         </div>
 
@@ -177,14 +178,14 @@ export default async function DashboardPage() {
                 </div>
               </div>
 
-              <Link
+              <CrossAppLink
                 href={urls.chat}
                 className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-3 transition-all shadow-xl hover:shadow-2xl transform hover:scale-105"
               >
                 <Bot size={24} />
                 Abrir Asistente IA
                 <ArrowRight size={20} />
-              </Link>
+              </CrossAppLink>
             </div>
           </div>
 
@@ -221,14 +222,14 @@ export default async function DashboardPage() {
                 </div>
               </div>
 
-              <Link
+              <CrossAppLink
                 href={urls.admin}
                 className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white px-8 py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-3 transition-all shadow-xl hover:shadow-2xl transform hover:scale-105"
               >
                 <TrendingUp size={24} />
                 Abrir Flujo de Caja
                 <ArrowRight size={20} />
-              </Link>
+              </CrossAppLink>
             </div>
           </div>
         </div>

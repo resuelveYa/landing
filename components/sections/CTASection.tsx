@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowRight, Sparkles, Shield, Zap } from 'lucide-react';
+import { ArrowRight, FileSpreadsheet, TrendingUp, ShieldCheck } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 
 export function CTASection() {
@@ -18,92 +18,77 @@ export function CTASection() {
   }, [supabase.auth]);
 
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 relative overflow-hidden">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute inset-0 bg-grid-pattern" />
-      </div>
+    <section className="py-24 bg-[#0A1628]">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="bg-gradient-to-br from-blue-900/60 to-slate-800/60 border border-blue-800/40 rounded-3xl p-10 sm:p-16 text-center relative overflow-hidden">
+          {/* Background glow */}
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 via-cyan-600/5 to-blue-600/5" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-48 bg-blue-600/15 rounded-full blur-3xl" />
 
-      <div className="max-w-5xl mx-auto relative z-10">
-        <div className="text-center space-y-8">
-          {/* Badge */}
-          <div className="inline-flex items-center space-x-2 bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-medium">
-            <Sparkles className="w-4 h-4" />
-            <span>Únete a cientos de usuarios activos</span>
-          </div>
-
-          {/* Heading */}
-          <h2 className="text-4xl lg:text-6xl font-bold text-white leading-tight">
-            Empieza a optimizar tu negocio{' '}
-            <span className="block mt-2">hoy mismo</span>
-          </h2>
-
-          {/* Description */}
-          <p className="text-xl text-blue-100 max-w-2xl mx-auto">
-            Sin tarjeta de crédito. Sin compromisos. Cancela cuando quieras.
-            Comienza gratis y accede a todas las herramientas.
-          </p>
-
-          {/* Features Pills */}
-          <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
-            <div className="flex items-center space-x-2 bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full">
-              <Zap className="w-4 h-4" />
-              <span className="text-sm font-medium">Setup en 2 minutos</span>
+          <div className="relative">
+            <div className="inline-flex items-center gap-2 bg-blue-500/15 border border-blue-500/30 text-blue-400 px-4 py-2 rounded-full text-sm font-medium mb-6">
+              <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+              Disponible ahora · 2 análisis gratis
             </div>
-            <div className="flex items-center space-x-2 bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full">
-              <Shield className="w-4 h-4" />
-              <span className="text-sm font-medium">Datos 100% seguros</span>
-            </div>
-            <div className="flex items-center space-x-2 bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full">
-              <Sparkles className="w-4 h-4" />
-              <span className="text-sm font-medium">50 análisis IA gratis</span>
-            </div>
-          </div>
 
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4 pt-4">
-            {isSignedIn ? (
-              <Link
-                href="/dashboard"
-                className="group px-10 py-5 bg-white text-blue-600 rounded-xl font-bold text-lg transition-all shadow-2xl hover:shadow-3xl hover:scale-105 flex items-center space-x-2"
-              >
-                <span>Ir al Dashboard</span>
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Link>
-            ) : (
-              <>
+            <h2 className="text-4xl sm:text-5xl font-black text-white mb-4 leading-tight">
+              Tu próxima licitación,{' '}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">
+                sin errores
+              </span>
+            </h2>
+
+            <p className="text-slate-400 text-lg max-w-2xl mx-auto mb-10">
+              Únete a las empresas chilenas que presentan presupuestos más precisos y ganan
+              más contratos en Mercado Público.
+            </p>
+
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
+              {isSignedIn ? (
                 <Link
-                  href="/sign-up"
-                  className="group px-10 py-5 bg-white text-blue-600 rounded-xl font-bold text-lg transition-all shadow-2xl hover:shadow-3xl hover:scale-105 flex items-center space-x-2"
+                  href="/dashboard"
+                  className="group inline-flex items-center gap-2 px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-600/30 text-base"
                 >
-                  <span>Comenzar Gratis</span>
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  Ir al Dashboard
+                  <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
                 </Link>
-                <a
-                  href="#productos"
-                  className="px-10 py-5 border-2 border-white text-white rounded-xl font-bold text-lg transition-all hover:bg-white/10 backdrop-blur-sm"
-                >
-                  Ver Productos
-                </a>
-              </>
-            )}
-          </div>
+              ) : (
+                <>
+                  <Link
+                    href="/sign-up"
+                    className="group inline-flex items-center gap-2 px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-600/30 text-base"
+                  >
+                    Comenzar gratis
+                    <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                  <a
+                    href="mailto:soporte@licitex.cl"
+                    className="inline-flex items-center gap-2 px-8 py-4 border border-slate-600 hover:border-slate-400 text-slate-300 hover:text-white font-semibold rounded-xl transition-all text-base"
+                  >
+                    Hablar con ventas
+                  </a>
+                </>
+              )}
+            </div>
 
-          {/* Trust Line */}
-          <p className="text-blue-100 text-sm pt-4">
-            Más de <strong className="text-white">100 empresas</strong> confían en Resuelve YA
-          </p>
+            {/* Trust signals */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6 text-sm text-slate-500">
+              <div className="flex items-center gap-2">
+                <FileSpreadsheet size={16} className="text-slate-400" />
+                <span>Sin tarjeta de crédito</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <TrendingUp size={16} className="text-slate-400" />
+                <span>2 análisis gratis siempre</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <ShieldCheck size={16} className="text-slate-400" />
+                <span>Datos protegidos · Ley 19.628</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-
-      <style jsx>{`
-        .bg-grid-pattern {
-          background-image: 
-            linear-gradient(to right, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
-          background-size: 40px 40px;
-        }
-      `}</style>
     </section>
   );
 }

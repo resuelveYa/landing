@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import Link from 'next/link';
-import { Menu, X, LogOut, User as UserIcon } from 'lucide-react';
+import { Menu, X, LogOut } from 'lucide-react';
 import Logo from './logo';
 import { User } from '@supabase/supabase-js';
 
@@ -11,6 +11,7 @@ export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [scrolled, setScrolled] = useState(false);
   const supabase = createClient();
 
   useEffect(() => {
@@ -25,7 +26,13 @@ export default function Navigation() {
       setUser(session?.user ?? null);
     });
 
-    return () => subscription.unsubscribe();
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      subscription.unsubscribe();
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, [supabase.auth]);
 
   const handleSignOut = async () => {
@@ -34,63 +41,91 @@ export default function Navigation() {
   };
 
   return (
-    <nav className="fixed w-full bg-white/95 backdrop-blur-sm z-50 shadow-sm border-b border-gray-100">
+    <nav className={`fixed w-full z-50 transition-all duration-300 ${
+      scrolled
+        ? 'bg-slate-900/95 backdrop-blur-md border-b border-slate-800/80 shadow-xl shadow-black/20'
+        : 'bg-transparent'
+    }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
-          <div className="flex-shrink-0">
-            <Logo size="md" href="/" />
-          </div>
+        <div className="flex justify-between items-center h-16">
+          <Logo size="sm" href="/" />
 
-          <div className="hidden md:flex items-center space-x-8">
-            <a href="#productos" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Productos</a>
-            <a href="#caracteristicas" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Características</a>
-            <a href="#precios" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Precios</a>
+          {/* Desktop nav */}
+          <div className="hidden md:flex items-center gap-8">
+            <a href="#productos" className="text-slate-400 hover:text-white transition-colors text-sm font-medium">Productos</a>
+            <a href="#caracteristicas" className="text-slate-400 hover:text-white transition-colors text-sm font-medium">Funcionalidades</a>
+            <a href="#como-funciona" className="text-slate-400 hover:text-white transition-colors text-sm font-medium">Cómo funciona</a>
+            <a href="#precios" className="text-slate-400 hover:text-white transition-colors text-sm font-medium">Precios</a>
 
             {!loading && (
               user ? (
-                <>
-                  <Link href="/dashboard" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Dashboard</Link>
-                  <button onClick={handleSignOut} className="flex items-center gap-2 text-gray-500 hover:text-red-600 transition-colors font-medium">
-                    <LogOut size={18} />
+                <div className="flex items-center gap-4">
+                  <Link href="/dashboard" className="text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-lg transition-all">
+                    Dashboard
+                  </Link>
+                  <button onClick={handleSignOut} className="flex items-center gap-1.5 text-slate-400 hover:text-red-400 transition-colors text-sm">
+                    <LogOut size={15} />
                     Salir
                   </button>
-                </>
+                </div>
               ) : (
-                <>
-                  <Link href="/sign-in" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Iniciar Sesión</Link>
-                  <Link href="/sign-up" className="btn-primary">Comenzar Gratis</Link>
-                </>
+                <div className="flex items-center gap-3">
+                  <Link href="/sign-in" className="text-slate-400 hover:text-white transition-colors text-sm font-medium">
+                    Iniciar sesión
+                  </Link>
+                  <Link href="/sign-up" className="text-sm font-bold text-white bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-lg transition-all">
+                    Comenzar gratis
+                  </Link>
+                </div>
               )
             )}
           </div>
 
-          <button onClick={() => setIsOpen(!isOpen)} className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors">
-            {isOpen ? <X size={24} /> : <Menu size={24} />}
+          {/* Mobile menu button */}
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="md:hidden p-2 text-slate-400 hover:text-white transition-colors"
+          >
+            {isOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
         </div>
 
+        {/* Mobile menu */}
         {isOpen && (
-          <div className="md:hidden py-4 space-y-3 border-t border-gray-100 text-center">
-            <a href="#productos" className="block py-2 text-gray-700 font-medium" onClick={() => setIsOpen(false)}>Productos</a>
-            <a href="#caracteristicas" className="block py-2 text-gray-700 font-medium" onClick={() => setIsOpen(false)}>Características</a>
-            <a href="#precios" className="block py-2 text-gray-700 font-medium" onClick={() => setIsOpen(false)}>Precios</a>
-
-            {!loading && (
-              user ? (
-                <>
-                  <Link href="/dashboard" className="block py-2 text-gray-700 font-medium" onClick={() => setIsOpen(false)}>Dashboard</Link>
-                  <button onClick={handleSignOut} className="w-full py-2 text-red-600 font-medium flex items-center justify-center gap-2">
-                    <LogOut size={18} />
-                    Salir
-                  </button>
-                </>
-              ) : (
-                <>
-                  <Link href="/sign-in" className="block py-2 text-gray-700 font-medium" onClick={() => setIsOpen(false)}>Iniciar Sesión</Link>
-                  <Link href="/sign-up" className="block btn-primary text-center mt-2" onClick={() => setIsOpen(false)}>Comenzar Gratis</Link>
-                </>
-              )
-            )}
+          <div className="md:hidden py-4 space-y-1 border-t border-slate-800">
+            {['#productos', '#caracteristicas', '#como-funciona', '#precios'].map((href, i) => (
+              <a
+                key={i}
+                href={href}
+                className="block px-4 py-2.5 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg text-sm font-medium transition-all"
+                onClick={() => setIsOpen(false)}
+              >
+                {['Productos', 'Funcionalidades', 'Cómo funciona', 'Precios'][i]}
+              </a>
+            ))}
+            <div className="pt-3 px-4 space-y-2 border-t border-slate-800 mt-3">
+              {!loading && (
+                user ? (
+                  <>
+                    <Link href="/dashboard" className="block text-center py-2.5 bg-blue-600 text-white font-bold rounded-lg text-sm" onClick={() => setIsOpen(false)}>
+                      Dashboard
+                    </Link>
+                    <button onClick={handleSignOut} className="w-full text-center py-2.5 text-red-400 font-medium text-sm">
+                      Cerrar sesión
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link href="/sign-up" className="block text-center py-2.5 bg-blue-600 text-white font-bold rounded-lg text-sm" onClick={() => setIsOpen(false)}>
+                      Comenzar gratis
+                    </Link>
+                    <Link href="/sign-in" className="block text-center py-2.5 text-slate-300 font-medium text-sm" onClick={() => setIsOpen(false)}>
+                      Iniciar sesión
+                    </Link>
+                  </>
+                )
+              )}
+            </div>
           </div>
         )}
       </div>

@@ -1,98 +1,125 @@
 'use client';
 
-import { UserPlus, Zap, TrendingUp } from 'lucide-react';
+import { Upload, Cpu, FileCheck, TrendingUp } from 'lucide-react';
 
 export function HowItWorksSection() {
   const steps = [
     {
       number: '01',
-      icon: UserPlus,
-      title: 'Crea tu cuenta',
-      description: 'Regístrate gratis en segundos con Google o tu email. Sin tarjeta de crédito requerida.',
-      gradient: 'from-blue-500 to-blue-600',
+      icon: Upload,
+      title: 'Sube las bases y tu presupuesto',
+      description: 'Carga el PDF de las bases de licitación de Mercado Público y tu presupuesto en Excel o PDF. También puedes subir bases técnicas y administrativas por separado.',
+      detail: 'Formatos: .xlsx, .xls, .pdf, .csv',
     },
     {
       number: '02',
-      icon: Zap,
-      title: 'Elige tu herramienta',
-      description: 'Selecciona Budget Analyzer para análisis IA o Cash Flow para gestión financiera.',
-      gradient: 'from-purple-500 to-purple-600',
+      icon: Cpu,
+      title: 'La IA analiza en segundos',
+      description: 'El sistema cruza tu presupuesto con los requisitos de las bases, valida precios contra referencias del mercado chileno y detecta partidas faltantes o inconsistencias.',
+      detail: 'Tiempo promedio: 90 segundos',
     },
     {
       number: '03',
+      icon: FileCheck,
+      title: 'Revisa el informe de observaciones',
+      description: 'Recibes un informe estructurado con observaciones priorizadas por criticidad: errores que descalifican, precios de riesgo y oportunidades de optimización.',
+      detail: 'Exportable en PDF y Excel',
+    },
+    {
+      number: '04',
       icon: TrendingUp,
-      title: 'Empieza a optimizar',
-      description: 'Comienza a analizar presupuestos o registrar transacciones. Resultados en minutos.',
-      gradient: 'from-green-500 to-green-600',
+      title: 'Ajusta y presenta con confianza',
+      description: 'Corrige tu presupuesto en base al informe y adjunta el reporte de cumplimiento a tu oferta. Haz seguimiento del proyecto con nuestro módulo de flujo de caja si eres adjudicado.',
+      detail: 'Historial guardado por proyecto',
     },
   ];
 
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-gray-50">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
+    <section id="como-funciona" className="py-24 bg-[#0A1628]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-            Comienza en{' '}
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              3 simples pasos
+          <p className="text-blue-400 font-semibold text-sm uppercase tracking-widest mb-3">Proceso</p>
+          <h2 className="text-4xl lg:text-5xl font-black text-white mb-4">
+            De las bases al presupuesto final{' '}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">
+              en 4 pasos
             </span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Desde el registro hasta tu primer análisis en menos de 2 minutos
+          <p className="text-slate-400 text-lg max-w-2xl mx-auto">
+            Un flujo diseñado para el proceso real de postulación en Mercado Público
           </p>
         </div>
 
-        {/* Steps */}
-        <div className="grid md:grid-cols-3 gap-8 lg:gap-12 relative">
-          {/* Connecting Lines (desktop only) */}
-          <div className="hidden md:block absolute top-1/4 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-200 via-purple-200 to-green-200 -z-10" />
+        <div className="relative">
+          {/* Vertical line */}
+          <div className="absolute left-8 lg:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-blue-600/60 via-blue-600/30 to-transparent hidden sm:block" />
 
-          {steps.map((step, idx) => {
-            const Icon = step.icon;
-            return (
-              <div
-                key={idx}
-                className="relative bg-white rounded-3xl p-8 border-2 border-gray-200 hover:border-gray-300 transition-all hover:shadow-xl group"
-              >
-                {/* Step Number */}
-                <div className="absolute -top-6 left-1/2 -translate-x-1/2">
-                  <div className={`w-12 h-12 bg-gradient-to-br ${step.gradient} rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg`}>
+          <div className="space-y-12">
+            {steps.map((step, idx) => {
+              const Icon = step.icon;
+              const isEven = idx % 2 === 0;
+              return (
+                <div
+                  key={idx}
+                  className={`relative flex items-start gap-8 lg:gap-16 ${isEven ? 'lg:flex-row' : 'lg:flex-row-reverse'}`}
+                >
+                  {/* Number bubble — center on desktop */}
+                  <div className="hidden lg:flex absolute left-1/2 -translate-x-1/2 w-14 h-14 bg-blue-600 rounded-full items-center justify-center text-white font-black text-lg shadow-lg shadow-blue-600/40 z-10 border-4 border-[#0A1628]">
                     {idx + 1}
                   </div>
-                </div>
 
-                {/* Icon */}
-                <div className="mt-6 mb-6">
-                  <div className={`inline-flex w-16 h-16 bg-gradient-to-br ${step.gradient} rounded-2xl items-center justify-center shadow-xl group-hover:scale-110 transition-transform`}>
-                    <Icon className="w-8 h-8 text-white" />
+                  {/* Card */}
+                  <div className={`w-full lg:w-5/12 ${isEven ? 'lg:text-right lg:pr-8' : 'lg:text-left lg:pl-8'}`}>
+                    <div className="bg-slate-800/60 border border-slate-700/50 rounded-2xl p-7 hover:border-blue-500/40 transition-all">
+                      <div className={`flex items-center gap-4 mb-4 ${isEven ? 'lg:flex-row-reverse' : ''}`}>
+                        <div className="w-11 h-11 bg-blue-600/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                          <Icon className="w-5 h-5 text-blue-400" />
+                        </div>
+                        <div>
+                          <span className="text-blue-500 text-xs font-bold uppercase tracking-widest">Paso {step.number}</span>
+                          <h3 className="text-white font-bold text-lg leading-snug">{step.title}</h3>
+                        </div>
+                      </div>
+                      <p className="text-slate-400 text-sm leading-relaxed mb-3">{step.description}</p>
+                      <span className="text-xs text-slate-500 bg-slate-900/60 px-3 py-1 rounded-full border border-slate-700/50">
+                        {step.detail}
+                      </span>
+                    </div>
                   </div>
-                </div>
 
-                {/* Content */}
-                <h3 className="text-2xl font-bold text-gray-900 mb-3">
-                  {step.title}
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  {step.description}
-                </p>
-              </div>
-            );
-          })}
+                  {/* Spacer for other side */}
+                  <div className="hidden lg:block lg:w-5/12" />
+                </div>
+              );
+            })}
+          </div>
         </div>
 
-        {/* Bottom CTA */}
-        <div className="mt-16 text-center">
-          <p className="text-gray-600 mb-6">
-            ¿Listo para comenzar?
-          </p>
-          <a
-            href="#precios"
-            className="inline-flex items-center space-x-2 px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl font-semibold transition-all shadow-xl hover:shadow-2xl hover:scale-105"
-          >
-            <span>Ver Planes</span>
-            <span>→</span>
-          </a>
+        {/* Example types */}
+        <div className="mt-20 grid sm:grid-cols-3 gap-5">
+          {[
+            {
+              emoji: '🏗️',
+              title: 'Obras civiles',
+              desc: 'Construcción de plazas, pavimentación, obras de agua potable, alcantarillado y vialidad municipal.',
+            },
+            {
+              emoji: '🏢',
+              title: 'Servicios profesionales',
+              desc: 'Consultorías, asesorías técnicas, inspecciones y diseño de proyectos para municipalidades.',
+            },
+            {
+              emoji: '🚚',
+              title: 'Suministros y compras',
+              desc: 'Compra de equipos, materiales, vehículos y suministros para organismos públicos.',
+            },
+          ].map((type, i) => (
+            <div key={i} className="bg-slate-800/40 border border-slate-700/40 rounded-xl p-6 text-center">
+              <div className="text-3xl mb-3">{type.emoji}</div>
+              <h4 className="text-white font-bold mb-2">{type.title}</h4>
+              <p className="text-slate-400 text-sm leading-relaxed">{type.desc}</p>
+            </div>
+          ))}
         </div>
       </div>
     </section>

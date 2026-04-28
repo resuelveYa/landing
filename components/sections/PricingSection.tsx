@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Check, Zap, Star, Crown } from 'lucide-react';
+import { Check, Zap, Star, Crown, Building2 } from 'lucide-react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 
@@ -23,139 +23,92 @@ export function PricingSection() {
       name: 'Free',
       price: '$0',
       period: 'siempre',
-      description: 'Perfecto para empezar y probar las herramientas',
+      description: 'Para conocer la plataforma y hacer tus primeras pruebas',
       icon: Zap,
       iconColor: 'text-gray-600',
       gradient: 'from-gray-50 to-gray-100',
       borderColor: 'border-gray-200',
       buttonStyle: 'bg-gray-900 hover:bg-gray-800 text-white',
+      buttonLabel: 'Comenzar Gratis',
       popular: false,
       features: [
-        { text: '10 análisis IA/mes', included: true },
-        { text: '100 transacciones/mes', included: true },
+        { text: '2 análisis IA incluidos', included: true },
+        { text: 'Flujo de caja básico', included: true },
         { text: '1 organización', included: true },
-        { text: '5 exportaciones/mes', included: true },
-        { text: 'Gráficos básicos', included: true },
-        { text: 'Soporte por email', included: true },
-        { text: 'Proyecciones avanzadas', included: false },
-        { text: 'Multi-organización', included: false },
+        { text: 'Exportaciones PDF', included: false },
+        { text: 'Análisis extra disponibles', included: false },
+        { text: 'Soporte prioritario', included: false },
       ],
-      limits: {
-        budgetAnalyzer: {
-          daily_analyses: '3/día',
-          monthly_analyses: '10/mes',
-        },
-        cashFlow: {
-          transactions: '100/mes',
-          organizations: '1',
-          exports: '5/mes',
-        },
-      },
+      extra: null,
     },
     {
       id: 'starter',
       name: 'Starter',
-      price: '$9.990',
+      price: '$49.990',
       period: 'CLP/mes',
-      description: 'Para negocios en crecimiento que necesitan más capacidad',
+      description: 'Para empresas pequeñas con licitaciones ocasionales',
       icon: Star,
       iconColor: 'text-blue-600',
       gradient: 'from-blue-50 to-indigo-50',
       borderColor: 'border-blue-300',
       buttonStyle: 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white',
-      popular: true,
+      buttonLabel: 'Contratar Starter',
+      popular: false,
       features: [
-        { text: '100 análisis IA/mes', included: true },
-        { text: '500 transacciones/mes', included: true },
+        { text: '15 análisis IA incluidos/mes', included: true },
+        { text: 'Flujo de caja completo', included: true },
         { text: '3 organizaciones', included: true },
-        { text: '50 exportaciones/mes', included: true },
-        { text: 'Gráficos avanzados', included: true },
-        { text: 'Soporte prioritario', included: true },
-        { text: '20 proyecciones IA/mes', included: true },
-        { text: 'Reportes personalizados', included: true },
+        { text: 'Exportaciones PDF ilimitadas', included: true },
+        { text: 'Historial 12 meses', included: true },
+        { text: 'Soporte por email', included: true },
       ],
-      limits: {
-        budgetAnalyzer: {
-          daily_analyses: '10/día',
-          monthly_analyses: '500/mes',
-        },
-        cashFlow: {
-          transactions: '500/mes',
-          organizations: '3',
-          exports: '50/mes',
-          advanced_projections: '20/mes',
-        },
-      },
+      extra: '$3.500 CLP por análisis adicional',
     },
     {
-      id: 'professional',
-      name: 'Professional',
-      price: '$29.990',
+      id: 'pro',
+      name: 'Pro',
+      price: '$99.990',
       period: 'CLP/mes',
-      description: 'Para empresas que requieren capacidad profesional',
+      description: 'Para contratistas con licitaciones frecuentes',
       icon: Crown,
       iconColor: 'text-purple-600',
       gradient: 'from-purple-50 to-pink-50',
       borderColor: 'border-purple-300',
       buttonStyle: 'bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white',
-      popular: false,
+      buttonLabel: 'Contratar Pro',
+      popular: true,
       features: [
-        { text: 'Análisis IA ilimitados', included: true },
-        { text: '2.000 transacciones/mes', included: true },
+        { text: '40 análisis IA incluidos/mes', included: true },
+        { text: 'Flujo de caja completo', included: true },
         { text: '10 organizaciones', included: true },
         { text: 'Exportaciones ilimitadas', included: true },
-        { text: 'Gráficos avanzados', included: true },
-        { text: 'Soporte prioritario 24/7', included: true },
-        { text: '100 proyecciones IA/mes', included: true },
-        { text: 'API access', included: true },
+        { text: 'Proyecciones IA avanzadas', included: true },
+        { text: 'Soporte prioritario', included: true },
       ],
-      limits: {
-        budgetAnalyzer: {
-          daily_analyses: 'Ilimitado',
-          monthly_analyses: 'Ilimitado',
-        },
-        cashFlow: {
-          transactions: '2.000/mes',
-          organizations: '10',
-          exports: 'Ilimitado',
-          advanced_projections: '100/mes',
-        },
-      },
+      extra: '$2.900 CLP por análisis adicional',
     },
     {
-      id: 'enterprise',
-      name: 'Enterprise',
-      price: 'Custom',
-      period: 'contactar',
-      description: 'Solución personalizada para grandes empresas',
-      icon: Crown,
-      iconColor: 'text-yellow-600',
-      gradient: 'from-yellow-50 to-orange-50',
-      borderColor: 'border-yellow-300',
-      buttonStyle: 'bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white',
+      id: 'business',
+      name: 'Business',
+      price: '$179.990',
+      period: 'CLP/mes',
+      description: 'Para empresas constructoras con alto volumen',
+      icon: Building2,
+      iconColor: 'text-orange-600',
+      gradient: 'from-orange-50 to-yellow-50',
+      borderColor: 'border-orange-300',
+      buttonStyle: 'bg-gradient-to-r from-orange-600 to-yellow-600 hover:from-orange-700 hover:to-yellow-700 text-white',
+      buttonLabel: 'Contratar Business',
       popular: false,
       features: [
-        { text: 'Todo ilimitado', included: true },
+        { text: '120 análisis IA incluidos/mes', included: true },
+        { text: 'Flujo de caja completo', included: true },
         { text: 'Organizaciones ilimitadas', included: true },
         { text: 'Exportaciones ilimitadas', included: true },
+        { text: 'API access', included: true },
         { text: 'Soporte dedicado 24/7', included: true },
-        { text: 'Proyecciones IA ilimitadas', included: true },
-        { text: 'API access completo', included: true },
-        { text: 'SLA garantizado', included: true },
-        { text: 'Onboarding personalizado', included: true },
       ],
-      limits: {
-        budgetAnalyzer: {
-          daily_analyses: 'Ilimitado',
-          monthly_analyses: 'Ilimitado',
-        },
-        cashFlow: {
-          transactions: 'Ilimitado',
-          organizations: 'Ilimitado',
-          exports: 'Ilimitado',
-          advanced_projections: 'Ilimitado',
-        },
-      },
+      extra: '$2.200 CLP por análisis adicional',
     },
   ];
 
@@ -171,136 +124,118 @@ export function PricingSection() {
             </span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-            Comienza gratis y actualiza cuando lo necesites. Sin compromisos, cancela cuando quieras.
+            Sin letra chica. Sin compromisos anuales. Cancela cuando quieras.
           </p>
           <div className="inline-flex items-center space-x-2 bg-green-100 text-green-700 px-4 py-2 rounded-full text-sm font-medium">
             <Check className="w-4 h-4" />
-            <span>Por ahora todos los planes son gratuitos durante la beta</span>
+            <span>Todos los planes incluyen flujo de caja completo</span>
           </div>
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid lg:grid-cols-4 gap-8">
+        <div className="grid lg:grid-cols-4 gap-6">
           {plans.map((plan) => {
             const Icon = plan.icon;
             return (
               <div
                 key={plan.id}
-                className={`relative bg-gradient-to-br ${plan.gradient} rounded-3xl p-8 border-2 ${plan.borderColor} ${plan.popular ? 'ring-4 ring-blue-200 scale-105' : ''
-                  } transition-all hover:shadow-2xl`}
+                className={`relative bg-gradient-to-br ${plan.gradient} rounded-3xl p-7 border-2 ${plan.borderColor} ${
+                  plan.popular ? 'ring-4 ring-purple-200 scale-105' : ''
+                } transition-all hover:shadow-2xl flex flex-col`}
               >
-                {/* Popular Badge */}
                 {plan.popular && (
                   <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                    <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-1 rounded-full text-sm font-bold shadow-lg">
+                    <div className="bg-gradient-to-r from-purple-600 to-purple-700 text-white px-4 py-1 rounded-full text-sm font-bold shadow-lg whitespace-nowrap">
                       ⭐ Más Popular
                     </div>
                   </div>
                 )}
 
-                {/* Icon */}
-                <div className="mb-6">
-                  <Icon className={`w-12 h-12 ${plan.iconColor}`} />
+                <div className="mb-4">
+                  <Icon className={`w-10 h-10 ${plan.iconColor}`} />
                 </div>
 
-                {/* Plan Name */}
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                  {plan.name}
-                </h3>
-                <p className="text-gray-600 text-sm mb-6">
-                  {plan.description}
-                </p>
+                <h3 className="text-2xl font-bold text-gray-900 mb-1">{plan.name}</h3>
+                <p className="text-gray-500 text-sm mb-5">{plan.description}</p>
 
-                {/* Price */}
                 <div className="mb-6">
                   <div className="flex items-baseline">
-                    <span className="text-4xl font-bold text-gray-900">
-                      {plan.price}
-                    </span>
-                    {plan.period && (
-                      <span className="ml-2 text-gray-600">
-                        {plan.period}
-                      </span>
-                    )}
+                    <span className="text-3xl font-bold text-gray-900">{plan.price}</span>
+                    <span className="ml-2 text-gray-500 text-sm">{plan.period}</span>
                   </div>
+                  {plan.extra && (
+                    <p className="text-xs text-gray-500 mt-1">{plan.extra}</p>
+                  )}
                 </div>
 
-                {/* CTA Button */}
                 {isSignedIn ? (
-                  <Link
-                    href="/dashboard"
-                    className={`block w-full py-3 ${plan.buttonStyle} text-center rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl mb-8`}
-                  >
-                    Ir al Dashboard
-                  </Link>
+                  plan.id === 'free' ? (
+                    <Link
+                      href="/dashboard"
+                      className={`block w-full py-3 ${plan.buttonStyle} text-center rounded-xl font-semibold transition-all shadow mb-6`}
+                    >
+                      Ir al Dashboard
+                    </Link>
+                  ) : (
+                    <Link
+                      href={`/checkout?plan=${plan.id}`}
+                      className={`block w-full py-3 ${plan.buttonStyle} text-center rounded-xl font-semibold transition-all shadow mb-6`}
+                    >
+                      {plan.buttonLabel}
+                    </Link>
+                  )
                 ) : (
                   <Link
-                    href="/sign-up"
-                    className={`block w-full py-3 ${plan.buttonStyle} text-center rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl mb-8`}
+                    href={plan.id === 'free' ? '/sign-up' : `/sign-up?plan=${plan.id}`}
+                    className={`block w-full py-3 ${plan.buttonStyle} text-center rounded-xl font-semibold transition-all shadow mb-6`}
                   >
-                    {plan.id === 'enterprise' ? 'Contactar' : 'Comenzar Gratis'}
+                    {plan.id === 'free' ? 'Comenzar Gratis' : plan.buttonLabel}
                   </Link>
                 )}
 
-                {/* Features List */}
-                <div className="space-y-3">
+                <div className="space-y-2.5 flex-1">
                   {plan.features.map((feature, idx) => (
                     <div key={idx} className="flex items-start space-x-3">
-                      <div className={`flex-shrink-0 w-5 h-5 rounded-full ${feature.included ? 'bg-green-500' : 'bg-gray-300'
-                        } flex items-center justify-center mt-0.5`}>
+                      <div className={`flex-shrink-0 w-5 h-5 rounded-full ${
+                        feature.included ? 'bg-green-500' : 'bg-gray-200'
+                      } flex items-center justify-center mt-0.5`}>
                         {feature.included ? (
                           <Check className="w-3 h-3 text-white" />
                         ) : (
-                          <span className="text-white text-xs">−</span>
+                          <span className="text-gray-400 text-xs">−</span>
                         )}
                       </div>
-                      <span className={`text-sm ${feature.included ? 'text-gray-700' : 'text-gray-400'
-                        }`}>
+                      <span className={`text-sm ${feature.included ? 'text-gray-700' : 'text-gray-400'}`}>
                         {feature.text}
                       </span>
                     </div>
                   ))}
                 </div>
-
-                {/* Limits Details (collapsed) */}
-                <details className="mt-6 bg-white/50 rounded-xl p-4">
-                  <summary className="cursor-pointer font-semibold text-gray-700 text-sm">
-                    Ver límites detallados
-                  </summary>
-                  <div className="mt-4 space-y-3 text-xs text-gray-600">
-                    <div>
-                      <div className="font-semibold text-gray-900 mb-1">Budget Analyzer:</div>
-                      <div>• Análisis diarios: {plan.limits.budgetAnalyzer.daily_analyses}</div>
-                      <div>• Análisis mensuales: {plan.limits.budgetAnalyzer.monthly_analyses}</div>
-                    </div>
-                    <div>
-                      <div className="font-semibold text-gray-900 mb-1">Cash Flow:</div>
-                      <div>• Transacciones: {plan.limits.cashFlow.transactions}</div>
-                      <div>• Organizaciones: {plan.limits.cashFlow.organizations}</div>
-                      <div>• Exportaciones: {plan.limits.cashFlow.exports}</div>
-                      {plan.limits.cashFlow.advanced_projections && (
-                        <div>• Proyecciones IA: {plan.limits.cashFlow.advanced_projections}</div>
-                      )}
-                    </div>
-                  </div>
-                </details>
               </div>
             );
           })}
         </div>
 
-        {/* Bottom Note */}
-        <div className="mt-16 text-center bg-gray-50 rounded-2xl p-8">
-          <p className="text-gray-600 mb-4">
-            ¿Necesitas algo específico? Los planes Enterprise son totalmente personalizables.
-          </p>
-          <a href="mailto:soporte@licitex.cl"
-            className="inline-flex items-center space-x-2 text-blue-600 hover:text-blue-700 font-semibold"
+        {/* Enterprise CTA */}
+        <div className="mt-10 bg-gradient-to-r from-gray-900 to-gray-800 rounded-2xl p-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div>
+            <h3 className="text-white text-xl font-bold mb-1">¿Empresa grande o necesidades especiales?</h3>
+            <p className="text-gray-400 text-sm">Planes Enterprise desde $350.000 CLP/mes con SLA, soporte dedicado y análisis ilimitados.</p>
+          </div>
+          <a
+            href="mailto:soporte@licitex.cl"
+            className="flex-shrink-0 px-6 py-3 bg-white text-gray-900 rounded-xl font-bold hover:bg-gray-100 transition-all whitespace-nowrap"
           >
-            <span>Contáctanos</span>
-            <span>→</span>
+            Contactar ventas →
           </a>
         </div>
+
+        {/* Bottom note */}
+        <p className="text-center text-gray-400 text-sm mt-8">
+          Pagos procesados de forma segura con{' '}
+          <span className="font-semibold text-gray-600">Webpay / Transbank</span>.
+          Precios en pesos chilenos (CLP) con IVA incluido.
+        </p>
       </div>
     </section>
   );

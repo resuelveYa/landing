@@ -8,86 +8,71 @@ export function FAQSection() {
 
   const faqs = [
     {
-      question: '¿Qué incluye el plan gratuito?',
-      answer: 'El plan Free incluye 50 análisis IA al mes, 100 transacciones mensuales, 1 organización, 5 exportaciones y acceso completo a ambas herramientas (Budget Analyzer y Cash Flow). Es perfecto para probar el sistema sin compromisos.',
+      question: '¿Para qué tipo de licitaciones sirve licitex?',
+      answer: 'licitex está diseñado para licitaciones publicadas en Mercado Público (mercadopublico.cl), especialmente licitaciones de municipalidades y organismos públicos. Funciona con Licitaciones Públicas (LP), Licitaciones en Convenio Marco (LE) y Licitaciones Simplificadas (L1). Es ideal para empresas de obras civiles, servicios profesionales y suministros.',
     },
     {
-      question: '¿Cómo funciona el análisis con IA de presupuestos?',
-      answer: 'Nuestro Budget Analyzer utiliza inteligencia artificial entrenada específicamente en proyectos de construcción. Analiza tu presupuesto línea por línea, detecta errores comunes, identifica omisiones y sugiere optimizaciones de costos. Todo en menos de 2 minutos.',
+      question: '¿Cómo sube las bases de licitación de Mercado Público?',
+      answer: 'Descarga los documentos de la licitación desde mercadopublico.cl (bases técnicas, bases administrativas, presupuesto referencial) y súbelos directamente a licitex en formato PDF o Excel. La IA los procesa automáticamente sin necesidad de configuración previa.',
     },
     {
-      question: '¿Puedo gestionar múltiples negocios?',
-      answer: 'Sí, dependiendo de tu plan. El plan Free permite 1 organización, Starter hasta 3, Professional hasta 10, y Enterprise organizaciones ilimitadas. Cada organización mantiene sus datos completamente separados.',
+      question: '¿Qué tan precisos son los precios de referencia?',
+      answer: 'Los precios de referencia se basan en datos históricos de licitaciones adjudicadas en Chile, precios de materiales de construcción publicados por la Cámara Chilena de la Construcción y valores del mercado actualizado. Se actualizan periódicamente para reflejar variaciones de IPC y mercado.',
     },
     {
-      question: '¿Mis datos están seguros?',
-      answer: 'Absolutamente. Utilizamos encriptación de nivel bancario (TLS 1.3) para todas las transmisiones de datos y almacenamiento cifrado en servidores seguros. Tus datos nunca se comparten con terceros y cumplimos con normativas de protección de datos.',
+      question: '¿Puedo subir presupuestos en Excel con fórmulas?',
+      answer: 'Sí. licitex procesa archivos .xlsx y .xls con fórmulas, tablas dinámicas y múltiples hojas. También acepta PDF (incluyendo escaneos con OCR) y archivos CSV. Si tu presupuesto tiene un formato muy específico, contáctanos para ajustar el procesamiento.',
     },
     {
-      question: '¿Puedo exportar mis datos y reportes?',
-      answer: 'Sí, todos los planes incluyen exportación de datos. El plan Free permite 5 exportaciones mensuales, Starter 50, y Professional/Enterprise exportaciones ilimitadas. Puedes exportar en formato PDF y Excel.',
+      question: '¿Qué pasa si la licitación tiene documentos confidenciales?',
+      answer: 'Tus documentos se procesan con encriptación en tránsito y en reposo. No se comparten con terceros ni se usan para entrenar modelos de IA. Puedes eliminar tus documentos en cualquier momento desde tu cuenta. Cumplimos con la Ley N° 19.628 de Protección de la Vida Privada.',
     },
     {
-      question: '¿Qué pasa si supero los límites de mi plan?',
-      answer: 'Te notificaremos cuando estés cerca de alcanzar tus límites. Si los superas, simplemente no podrás realizar más acciones hasta el siguiente período de reset (mensual) o puedes actualizar tu plan en cualquier momento sin perder datos.',
+      question: '¿El sistema detecta errores aritméticos en el presupuesto?',
+      answer: 'Sí. Además de partidas faltantes y precios fuera de rango, licitex verifica la consistencia matemática del presupuesto: totales de partidas, subtotales por ítem, aplicación de gastos generales, utilidad e IVA. Uno de los errores más frecuentes que causan descalificaciones.',
     },
     {
-      question: '¿Puedo cambiar de plan en cualquier momento?',
-      answer: 'Sí, puedes actualizar o degradar tu plan cuando quieras. Los cambios se aplican inmediatamente y el precio se prorratea. No hay penalizaciones por cambiar de plan ni contratos de permanencia.',
+      question: '¿Puedo usar licitex si ya fui adjudicado?',
+      answer: 'Sí. El módulo de Flujo de Caja te permite hacer seguimiento financiero del proyecto adjudicado: controlar estados de pago, proyectar liquidez mensual, registrar gastos por centro de costo y generar informes para tu contraparte técnica en la municipalidad.',
     },
     {
-      question: '¿Ofrecen soporte técnico?',
-      answer: 'Todos los planes incluyen soporte por email. Los planes Starter y Professional incluyen soporte prioritario con respuesta en menos de 24 horas. El plan Enterprise incluye soporte dedicado 24/7 con SLA garantizado.',
-    },
-    {
-      question: '¿Necesito instalar algún software?',
-      answer: 'No, Resuelve YA es 100% web. Funciona desde cualquier navegador moderno (Chrome, Firefox, Safari, Edge) en computadores, tablets y móviles. Solo necesitas conexión a internet.',
-    },
-    {
-      question: '¿Ofrecen capacitación para empresas?',
-      answer: 'El plan Enterprise incluye onboarding personalizado y capacitación para tu equipo. Para otros planes, ofrecemos documentación completa, tutoriales en video y webinars mensuales gratuitos.',
+      question: '¿Hay un contrato de permanencia?',
+      answer: 'No. Todos los planes son mensuales y puedes cancelar cuando quieras. Si cancelas, mantienes acceso hasta el fin del período pagado. Tus datos se conservan por 30 días antes de eliminarse permanentemente.',
     },
   ];
 
   return (
-    <section id="faq" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-            Preguntas{' '}
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Frecuentes
-            </span>
-          </h2>
-          <p className="text-xl text-gray-600">
-            Resolvemos tus dudas sobre Resuelve YA
-          </p>
+    <section id="faq" className="py-24 bg-slate-900">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-14">
+          <p className="text-blue-400 font-semibold text-sm uppercase tracking-widest mb-3">FAQ</p>
+          <h2 className="text-4xl font-black text-white mb-4">Preguntas frecuentes</h2>
+          <p className="text-slate-400">Todo lo que necesitas saber antes de empezar</p>
         </div>
 
-        {/* FAQ Accordion */}
-        <div className="space-y-4">
+        <div className="space-y-3">
           {faqs.map((faq, index) => (
             <div
               key={index}
-              className="bg-gray-50 rounded-2xl border-2 border-gray-200 hover:border-gray-300 transition-all overflow-hidden"
+              className={`border rounded-xl overflow-hidden transition-all ${
+                openIndex === index
+                  ? 'bg-slate-800/80 border-blue-500/40'
+                  : 'bg-slate-800/30 border-slate-700/40 hover:border-slate-600/60'
+              }`}
             >
               <button
                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-gray-100 transition-colors"
+                className="w-full px-6 py-5 flex items-center justify-between text-left"
               >
-                <span className="text-lg font-semibold text-gray-900 pr-4">
-                  {faq.question}
-                </span>
+                <span className="text-white font-semibold pr-4 text-sm sm:text-base">{faq.question}</span>
                 <ChevronDown
-                  className={`w-6 h-6 text-gray-600 flex-shrink-0 transition-transform ${
-                    openIndex === index ? 'rotate-180' : ''
+                  className={`w-5 h-5 text-slate-400 flex-shrink-0 transition-transform ${
+                    openIndex === index ? 'rotate-180 text-blue-400' : ''
                   }`}
                 />
               </button>
-              
               {openIndex === index && (
-                <div className="px-6 pb-5 text-gray-600 leading-relaxed">
+                <div className="px-6 pb-5 text-slate-400 text-sm leading-relaxed border-t border-slate-700/40 pt-4">
                   {faq.answer}
                 </div>
               )}
@@ -95,20 +80,14 @@ export function FAQSection() {
           ))}
         </div>
 
-        {/* Contact CTA */}
-        <div className="mt-12 text-center bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-8 border-2 border-gray-200">
-          <h3 className="text-xl font-bold text-gray-900 mb-2">
-            ¿Tienes otra pregunta?
-          </h3>
-          <p className="text-gray-600 mb-4">
-            Nuestro equipo está aquí para ayudarte
-          </p>
+        <div className="mt-10 text-center bg-slate-800/40 border border-slate-700/40 rounded-2xl p-7">
+          <p className="text-white font-semibold mb-1">¿Tienes otra consulta?</p>
+          <p className="text-slate-400 text-sm mb-4">Nuestro equipo responde en menos de 24 horas hábiles</p>
           <a
             href="mailto:soporte@licitex.cl"
-            className="inline-flex items-center space-x-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-lg transition-all text-sm"
           >
-            <span>Contactar Soporte</span>
-            <span>→</span>
+            Escribir al soporte →
           </a>
         </div>
       </div>
