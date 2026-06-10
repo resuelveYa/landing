@@ -4,6 +4,59 @@ import { useEffect, useState } from 'react';
 import { Check, Zap, Star, Crown, Building2 } from 'lucide-react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
+import { PLAN_LIST, type PlanId } from '@/lib/plans';
+
+const PLAN_DISPLAY: Record<PlanId, {
+  icon: typeof Zap;
+  iconColor: string;
+  gradient: string;
+  borderColor: string;
+  buttonStyle: string;
+  buttonLabel: string;
+  popular: boolean;
+}> = {
+  free: {
+    icon: Zap,
+    iconColor: 'text-gray-600',
+    gradient: 'from-gray-50 to-gray-100',
+    borderColor: 'border-gray-200',
+    buttonStyle: 'bg-gray-900 hover:bg-gray-800 text-white',
+    buttonLabel: 'Comenzar Gratis',
+    popular: false,
+  },
+  starter: {
+    icon: Star,
+    iconColor: 'text-blue-600',
+    gradient: 'from-blue-50 to-indigo-50',
+    borderColor: 'border-blue-300',
+    buttonStyle: 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white',
+    buttonLabel: 'Contratar Starter',
+    popular: false,
+  },
+  pro: {
+    icon: Crown,
+    iconColor: 'text-purple-600',
+    gradient: 'from-purple-50 to-pink-50',
+    borderColor: 'border-purple-300',
+    buttonStyle: 'bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white',
+    buttonLabel: 'Contratar Pro',
+    popular: true,
+  },
+  business: {
+    icon: Building2,
+    iconColor: 'text-orange-600',
+    gradient: 'from-orange-50 to-yellow-50',
+    borderColor: 'border-orange-300',
+    buttonStyle: 'bg-gradient-to-r from-orange-600 to-yellow-600 hover:from-orange-700 hover:to-yellow-700 text-white',
+    buttonLabel: 'Contratar Business',
+    popular: false,
+  },
+};
+
+function formatExtraAnalysis(amount?: number): string | null {
+  if (!amount) return null;
+  return `$${amount.toLocaleString('es-CL')} CLP por análisis adicional`;
+}
 
 export function PricingSection() {
   const [isSignedIn, setIsSignedIn] = useState(false);
@@ -17,100 +70,11 @@ export function PricingSection() {
     checkAuth();
   }, [supabase.auth]);
 
-  const plans = [
-    {
-      id: 'free',
-      name: 'Free',
-      price: '$0',
-      period: 'siempre',
-      description: 'Para conocer la plataforma y hacer tus primeras pruebas',
-      icon: Zap,
-      iconColor: 'text-gray-600',
-      gradient: 'from-gray-50 to-gray-100',
-      borderColor: 'border-gray-200',
-      buttonStyle: 'bg-gray-900 hover:bg-gray-800 text-white',
-      buttonLabel: 'Comenzar Gratis',
-      popular: false,
-      features: [
-        { text: '2 análisis IA incluidos', included: true },
-        { text: 'Flujo de caja básico', included: true },
-        { text: '1 organización', included: true },
-        { text: 'Exportaciones PDF', included: false },
-        { text: 'Análisis extra disponibles', included: false },
-        { text: 'Soporte prioritario', included: false },
-      ],
-      extra: null,
-    },
-    {
-      id: 'starter',
-      name: 'Starter',
-      price: '$49.990',
-      period: 'CLP/mes',
-      description: 'Para empresas pequeñas con licitaciones ocasionales',
-      icon: Star,
-      iconColor: 'text-blue-600',
-      gradient: 'from-blue-50 to-indigo-50',
-      borderColor: 'border-blue-300',
-      buttonStyle: 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white',
-      buttonLabel: 'Contratar Starter',
-      popular: false,
-      features: [
-        { text: '15 análisis IA incluidos/mes', included: true },
-        { text: 'Flujo de caja completo', included: true },
-        { text: '3 organizaciones', included: true },
-        { text: 'Exportaciones PDF ilimitadas', included: true },
-        { text: 'Historial 12 meses', included: true },
-        { text: 'Soporte por email', included: true },
-      ],
-      extra: '$3.500 CLP por análisis adicional',
-    },
-    {
-      id: 'pro',
-      name: 'Pro',
-      price: '$99.990',
-      period: 'CLP/mes',
-      description: 'Para contratistas con licitaciones frecuentes',
-      icon: Crown,
-      iconColor: 'text-purple-600',
-      gradient: 'from-purple-50 to-pink-50',
-      borderColor: 'border-purple-300',
-      buttonStyle: 'bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white',
-      buttonLabel: 'Contratar Pro',
-      popular: true,
-      features: [
-        { text: '40 análisis IA incluidos/mes', included: true },
-        { text: 'Flujo de caja completo', included: true },
-        { text: '10 organizaciones', included: true },
-        { text: 'Exportaciones ilimitadas', included: true },
-        { text: 'Proyecciones IA avanzadas', included: true },
-        { text: 'Soporte prioritario', included: true },
-      ],
-      extra: '$2.900 CLP por análisis adicional',
-    },
-    {
-      id: 'business',
-      name: 'Business',
-      price: '$179.990',
-      period: 'CLP/mes',
-      description: 'Para empresas constructoras con alto volumen',
-      icon: Building2,
-      iconColor: 'text-orange-600',
-      gradient: 'from-orange-50 to-yellow-50',
-      borderColor: 'border-orange-300',
-      buttonStyle: 'bg-gradient-to-r from-orange-600 to-yellow-600 hover:from-orange-700 hover:to-yellow-700 text-white',
-      buttonLabel: 'Contratar Business',
-      popular: false,
-      features: [
-        { text: '120 análisis IA incluidos/mes', included: true },
-        { text: 'Flujo de caja completo', included: true },
-        { text: 'Organizaciones ilimitadas', included: true },
-        { text: 'Exportaciones ilimitadas', included: true },
-        { text: 'API access', included: true },
-        { text: 'Soporte dedicado 24/7', included: true },
-      ],
-      extra: '$2.200 CLP por análisis adicional',
-    },
-  ];
+  const plans = PLAN_LIST.map((plan) => ({
+    ...plan,
+    ...PLAN_DISPLAY[plan.id],
+    extra: formatExtraAnalysis(plan.extraAnalysisPrice),
+  }));
 
   return (
     <section id="precios" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">

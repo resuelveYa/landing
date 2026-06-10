@@ -2,7 +2,14 @@ import AuthForm from "@/components/AuthForm";
 import Link from "next/link";
 import Logo from "@/components/logo";
 
-export default function SignInPage() {
+export default async function SignInPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ plan?: string }>;
+}) {
+  const { plan } = await searchParams;
+  const signUpHref = plan ? `/sign-up?plan=${plan}` : '/sign-up';
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-violet-50 flex flex-col">
       <header className="w-full py-6 px-4">
@@ -26,7 +33,7 @@ export default function SignInPage() {
 
           <p className="text-center mt-6 text-sm text-gray-600">
             ¿No tienes cuenta?{' '}
-            <Link href="/sign-up" className="text-blue-600 font-semibold hover:text-blue-700">
+            <Link href={signUpHref} className="text-blue-600 font-semibold hover:text-blue-700">
               Regístrate gratis
             </Link>
           </p>

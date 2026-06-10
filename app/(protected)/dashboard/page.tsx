@@ -1,11 +1,37 @@
 import { createClient } from '@/lib/supabase/server';
 export const dynamic = 'force-dynamic';
 import { redirect } from 'next/navigation';
-import { Sparkles, Bot, ExternalLink, Zap, BarChart3, FileText, ArrowRight, TrendingUp, DollarSign, LogOut } from 'lucide-react';
+import { Sparkles, Bot, BarChart3, FileText, ArrowRight, TrendingUp, DollarSign, LogOut, Crown } from 'lucide-react';
 import Link from 'next/link';
 import { getProductUrls } from '@/lib/config';
+import { PLANS, type PlanId } from '@/lib/plans';
+import { apiUrl } from '@/lib/api';
 import Logo from '@/components/logo';
 import CrossAppLink from '@/components/CrossAppLink';
+
+interface Subscription {
+  plan_id: string;
+  name: string;
+  analyses_remaining: number | null;
+  valid_until: string | null;
+}
+
+async function getSubscription(accessToken: string | undefined): Promise<Subscription> {
+  const fallback: Subscription = { plan_id: 'free', name: 'Free', analyses_remaining: null, valid_until: null };
+  if (!accessToken) return fallback;
+
+  try {
+    const res = await fetch(apiUrl('/api/payments/subscription'), {
+      headers: { Authorization: `Bearer ${accessToken}` },
+      cache: 'no-store',
+    });
+    if (!res.ok) return fallback;
+    const data = await res.json();
+    return data.success ? data.data : fallback;
+  } catch {
+    return fallback;
+  }
+}
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -15,15 +41,22 @@ export default async function DashboardPage() {
     redirect('/sign-in');
   }
 
-  const urls = getProductUrls();
+  const { data: { session } } = await supabase.auth.getSession();
+  const subscription = await getSubscription(session?.access_token);
 
-  const aiQueriesRemaining = (user.user_metadata?.aiQueriesRemaining as number) || 50;
-  const aiQueriesTotal = (user.user_metadata?.aiQueriesTotal as number) || 50;
-  const betaAccess = user.user_metadata?.betaAccess as boolean;
+  const urls = getProductUrls();
   const companyName = user.user_metadata?.companyName as string;
 
-  const queriesUsed = aiQueriesTotal - aiQueriesRemaining;
-  const queriesPercentage = (aiQueriesRemaining / aiQueriesTotal) * 100;
+  const currentPlan = PLANS[subscription.plan_id as PlanId] ?? PLANS.free;
+  const isFree = subscription.plan_id === 'free';
+
+  const aiQueriesTotal = currentPlan.analyses;
+  const aiQueriesRemaining = subscription.analyses_remaining ?? aiQueriesTotal;
+  const queriesUsed = Math.max(0, aiQueriesTotal - aiQueriesRemaining);
+  const queriesPercentage = aiQueriesTotal > 0 ? (aiQueriesRemaining / aiQueriesTotal) * 100 : 0;
+  const renewalDate = subscription.valid_until
+    ? new Date(subscription.valid_until).toLocaleDateString('es-CL', { day: 'numeric', month: 'long', year: 'numeric' })
+    : null;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
@@ -33,11 +66,9 @@ export default async function DashboardPage() {
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-3">
               <Logo size="md" />
-              {betaAccess && (
-                <span className="text-xs bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1 rounded-full font-bold animate-pulse">
-                  Versión Beta
-                </span>
-              )}
+              <span className="text-xs bg-gradient-to-r from-blue-500 to-purple-500 text-white px-3 py-1 rounded-full font-bold">
+                Plan {currentPlan.name}
+              </span>
             </div>
             <div className="flex items-center space-x-4">
               <div className="text-sm text-gray-600 font-medium">
@@ -103,22 +134,27 @@ export default async function DashboardPage() {
             </p>
           </div>
 
-          {/* Estado Beta */}
-          <div className="bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl shadow-xl p-8 text-white transform hover:scale-105 transition-all">
+          {/* Plan actual */}
+          <div className="bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl shadow-xl p-8 text-white transform hover:scale-105 transition-all flex flex-col">
             <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mb-4 shadow-lg">
-              <Zap size={28} />
+              <Crown size={28} />
             </div>
             <h3 className="text-3xl font-black mb-1">
-              Acceso Beta
+              Plan {currentPlan.name}
             </h3>
             <p className="text-purple-100 mb-4">
-              Todas las funciones desbloqueadas
+              {currentPlan.price}{isFree ? '' : ` ${currentPlan.period}`}
+              {renewalDate && ` · Renueva el ${renewalDate}`}
             </p>
-            <div className="bg-white/20 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/30">
-              <p className="text-sm font-bold flex items-center gap-2">
+            <div className="mt-auto">
+              <Link
+                href="/#precios"
+                className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/30 text-sm font-bold hover:bg-white/30 transition-all"
+              >
                 <Sparkles size={16} />
-                Sin límites durante el beta
-              </p>
+                {isFree ? 'Mejorar mi plan' : 'Ver otros planes'}
+                <ArrowRight size={16} />
+              </Link>
             </div>
           </div>
 
@@ -240,7 +276,7 @@ export default async function DashboardPage() {
             ¿Necesitas ayuda?
           </h3>
           <p className="text-white/90 mb-4 text-lg">
-            Como beta tester, tu feedback es invaluable. Contáctanos si tienes preguntas o sugerencias.
+            Tu feedback es invaluable. Contáctanos si tienes preguntas o sugerencias.
           </p>
           <Link href="mailto:soporte@licitex.cl" className="inline-flex items-center gap-2 bg-white text-blue-600 px-6 py-3 rounded-xl font-bold hover:bg-gray-100 transition-all">
             soporte@licitex.cl

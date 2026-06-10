@@ -6,6 +6,7 @@ import { createClient, cookieConfig, emergencyClearCookies } from '@/lib/supabas
 import { createBrowserClient } from '@supabase/ssr'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Mail, Lock, Loader2, Github, CheckCircle2, AlertCircle, ArrowRight } from 'lucide-react'
+import { isPaidPlanId } from '@/lib/plans'
 
 interface AuthFormProps {
   mode: 'sign-in' | 'sign-up'
@@ -20,7 +21,15 @@ export default function AuthForm({ mode }: AuthFormProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const redirectUrl = searchParams.get('redirect_url')
+  const plan = searchParams.get('plan')
   const [error, setError] = useState<string | null>(searchParams.get('error') || null)
+
+  // Si el usuario venía de elegir un plan pago en /#precios, lo llevamos a
+  // checkout en vez del dashboard una vez autenticado.
+  const postAuthPath = isPaidPlanId(plan) ? `/checkout?plan=${plan}` : '/dashboard'
+  const switchModeHref = mode === 'sign-in'
+    ? `/sign-up${plan ? `?plan=${plan}` : ''}`
+    : `/sign-in${plan ? `?plan=${plan}` : ''}`
 
   const isLocalBypass =
     !process.env.NEXT_PUBLIC_SUPABASE_URL ||
@@ -46,7 +55,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
             const callbackUrl = `${targetUrl.origin}/auth/callback?next=${encodeURIComponent(targetUrl.pathname + targetUrl.search)}#access_token=local-admin-bypass-token&refresh_token=local-admin-bypass-refresh-token&type=recovery`
             window.location.href = callbackUrl
           } else {
-            router.push('/dashboard')
+            router.push(postAuthPath)
             router.refresh()
           }
           return;
@@ -81,7 +90,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
             window.location.href = redirectUrl
           }
         } else {
-          router.push('/dashboard')
+          router.push(postAuthPath)
           router.refresh()
         }
       } else {
@@ -93,7 +102,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
           email: trimmedEmail,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/api/auth/callback`,
+            emailRedirectTo: `${window.location.origin}/api/auth/callback?next=${encodeURIComponent(postAuthPath)}`,
           },
         })
         if (error) throw error
@@ -122,7 +131,11 @@ export default function AuthForm({ mode }: AuthFormProps) {
     origin = origin.replace(/\/$/, '');
     // Encode the cross-app redirect_url into the `next` param so the callback route
     // can forward the user back to cashflow/budget-analyzer after OAuth completes.
-    const next = redirectUrl ? `?next=${encodeURIComponent(redirectUrl)}` : '';
+    // Si no hay redirect cross-app pero el usuario venía de elegir un plan, lo
+    // mandamos a checkout en vez del dashboard.
+    const next = redirectUrl
+      ? `?next=${encodeURIComponent(redirectUrl)}`
+      : `?next=${encodeURIComponent(postAuthPath)}`;
     return `${origin}/api/auth/callback${next}`;
   };
 
@@ -191,7 +204,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
         </p>
         <div className="space-y-4">
           <button
-            onClick={() => router.push('/sign-in')}
+            onClick={() => router.push(switchModeHref)}
             className="w-full bg-blue-600 text-white py-4 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg flex items-center justify-center gap-2"
           >
             Ir al inicio de sesión <ArrowRight className="w-5 h-5" />

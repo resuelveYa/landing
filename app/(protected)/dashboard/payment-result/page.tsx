@@ -4,12 +4,7 @@ import { Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { CheckCircle, XCircle, AlertCircle } from 'lucide-react'
-
-const PLAN_NAMES: Record<string, string> = {
-  starter: 'Starter',
-  pro: 'Pro',
-  business: 'Business',
-}
+import { PLANS } from '@/lib/plans'
 
 function PaymentResultContent() {
   const searchParams = useSearchParams()
@@ -22,7 +17,7 @@ function PaymentResultContent() {
         <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
         <h1 className="text-2xl font-bold text-gray-900 mb-2">¡Pago exitoso!</h1>
         <p className="text-gray-600 mb-2">
-          Tu suscripción al plan <strong>{PLAN_NAMES[plan || ''] || plan}</strong> está activa.
+          Tu suscripción al plan <strong>{PLANS[plan as keyof typeof PLANS]?.name || plan}</strong> está activa.
         </p>
         <p className="text-gray-500 text-sm mb-8">Ya puedes usar todos los análisis incluidos en tu plan.</p>
         <Link
